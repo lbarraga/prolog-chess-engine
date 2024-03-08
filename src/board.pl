@@ -19,43 +19,38 @@ initialize_board([
 % -------------------------------------------------------------------------------------------------------
 
 % If a coordinate is on the board.
-valid_position((R, C)) :-
+on_board((R, C)) :-
     between(0, 7, R),
     between(0, 7, C).
 
 
-% Get a row on the board.
-row(Index, Board, Row) :- nth0(Index, Board, Row).
+co_empty(Co, Board) :-
+    get(Co, Board, Square),
+    empty(Square).
 
 
-% Get a column on the board
-column(Index, Board, Column) :-
-    transpose(Board, Columns),
-    nth0(Index, Columns, Column).
+% column_through_co((_, C), Coords)        :- findall(Co, on_column(C, Co), Coords).
+% row_through_co((R, _), Coords)           :- findall(Co, on_row(R, Co), Coords).
 
+% diagonal_through_co((R, C), Coords)      :- 
+%     N is R - C,
+%     findall(Co, on_diagonal(N, Co), Coords).
 
-row_coordinates(R, Coords) :- 
-    findall((R, C), 
-    between(0, 7, C), Coords).
+% anti_diagonal_through_co((R, C), Coords) :- 
+%     N is R + C,
+%     findall(Co, on_anti_diagonal(N, Co), Coords).
 
+on_same_row((R, _), (R, C)) :- on_board((R, C)).
 
-column_coordinates(C, Coords) :- 
-    findall((R, C), 
-    between(0, 7, R), Coords).
+on_same_column((_, C), (R, C)) :- on_board((R, C)).
 
+on_same_anti_diagonal((R1, C1), (R2, C2)) :- 
+    on_board((R1, C1)), on_board((R2, C2)),
+    R1 + C1 =:= R2 + C2.
 
-
-% Get a diagonal on the board, starting from a coordinate and moving in `Direction`.
-% If the direction is `left`, the diagonal goes from top-left to bottom-right. 
-% If the `Direction` is right, it goes from the bottom-left to th top right.
-diagonal(StartCoordinate, Board, Direction, [StartCoordinate | Rest]) :-
-    valid_position(StartCoordinate),
-    next_position_diagonal(Direction, StartCoordinate, NextCoordinate),
-    diagonal(NextCoordinate, Board, Direction, Rest), !.
-diagonal(_, _, _, []).
-
-next_position_diagonal(left, (R, C), (NextR, NextC))  :- NextR is R + 1, NextC is C + 1.
-next_position_diagonal(right, (R, C), (NextR, NextC)) :- NextR is R - 1, NextC is C + 1.
+on_same_diagonal((R1, C1), (R2, C2)) :- 
+    on_board((R1, C1)), on_board((R2, C2)),
+    R1 - C1 =:= R2 - C2.
 
 
 % -------------------------------------------------------------------------------------------------------
@@ -64,7 +59,7 @@ next_position_diagonal(right, (R, C), (NextR, NextC)) :- NextR is R - 1, NextC i
 
 % Get a position on the board. Positions are coordinates with the center of origin in the top-left corner.
 get((R, C), Board, Piece) :-
-    row(R, Board, Row),
+    nth0(R, Board, Row),
     nth0(C, Row, Piece).
 
 
@@ -81,18 +76,21 @@ move(FromPos, ToPos, Board, NewBoard) :-
     place(ToPos, Piece, RemovedBoard, NewBoard).
 
 
+split_at_Co(Axis, Co, Coords) :- 
+    append(_, [Co|Coords], Axis).
+
+split_at_Co(Axis, Co, ReversedCoords) :- 
+    append(Coords, [Co|_], Axis),
+    reverse(Coords, ReversedCoords).
+
+
 take_until_not_empty(Board, [Co|RestInput], [Co|RestOutput]) :-
-    get(Co, Board, Square),
-    empty(Square),
+    co_empty(Co, Board),
     take_until_not_empty(Board, RestInput, RestOutput), !.
 take_until_not_empty(_, [Co|_], [Co]).
 
 
 open_path_moves(Board, Axis, PieceCo, OpenPathMoves) :- 
-    nth0(Index, Axis, PieceCo),
-    split(Index, Axis, LeftOfPiece, RightOfPiece),
-    reverse(LeftOfPiece, ReversedLeftOfPiece),
-    take_until_not_empty(Board, ReversedLeftOfPiece, OpenPathLeft),
-    take_until_not_empty(Board, RightOfPiece, OpenPathRight),
-    append(OpenPathLeft, OpenPathRight, OpenPathMoves).
+    split_at_Co(Axis, PieceCo, Range),
+    take_until_not_empty(Board, Range, OpenPathMoves).
 

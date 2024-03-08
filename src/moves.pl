@@ -2,7 +2,7 @@
 % ---------------------------------------------------------------------------------------------------------
 %                                                   Moves 
 % ---------------------------------------------------------------------------------------------------------
-% In this module, the possible move axes of every piece are defined. This is not with respect to a board,
+% In this module, the possible move rules of every piece are defined. This is not with respect to a board,
 %           where the set of possible moves is reduced if other pieces are in the way. 
 % ---------------------------------------------------------------------------------------------------------
 
@@ -10,16 +10,18 @@
 
 % -------------------------------------------------- Rook -------------------------------------------------
 
-reach(rook, (R, _), Axis) :- row_coordinates(R, Axis).
-reach(rook, (_, C), Axis) :- column_coordinates(C, Axis).
+move_rule(rook, Fromco, ToCo) :- on_row(Co, Row).
+move_rule(rook, Co, Col) :- column_through_co(C, Col).
 
-% -------------------------------------------------- Rook -------------------------------------------------
+% ------------------------------------------------- Bischop -----------------------------------------------
 
-positive_integer(1).
-positive_integer(X) :- positive_integer(Y), X is Y + 1.
+move_rule(bischop, Co, Diagonal) :- diagonal_through_co(Co, Diagonal).
+move_rule(bischop, Co, AntiDiagonal) :- anti_diagonal_through_co(Co, AntiDiagonal).
 
-sum_of_two(N, A, B) :-
-    positive_integer(A),
-    positive_integer(B),
-    A + B =:= N,
-    A =< B.
+% -------------------------------------------------  Queen  -----------------------------------------------
+
+move_rule(queen, Co, Moves) :- move_rule(bischop, Co, Moves).
+move_rule(queen, Co, Moves) :- move_rule(rook, Co, Moves).
+
+% -------------------------------------------------  Knight  -----------------------------------------------
+
