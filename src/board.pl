@@ -34,6 +34,17 @@ column(Index, Board, Column) :-
     nth0(Index, Columns, Column).
 
 
+row_coordinates(R, Coords) :- 
+    findall((R, C), 
+    between(0, 7, C), Coords).
+
+
+column_coordinates(C, Coords) :- 
+    findall((R, C), 
+    between(0, 7, R), Coords).
+
+
+
 % Get a diagonal on the board, starting from a coordinate and moving in `Direction`.
 % If the direction is `left`, the diagonal goes from top-left to bottom-right. 
 % If the `Direction` is right, it goes from the bottom-left to th top right.
