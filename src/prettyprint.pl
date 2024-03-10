@@ -1,6 +1,5 @@
 % Print the board with pieces
 print_board([R1, R2, R3, R4, R5, R6, R7, R8]) :-
-    write('     a   b   c   d   e   f   g   h'), nl,
     write('   +---+---+---+---+---+---+---+---+'), nl,
     print_row(R1, 8),
     write('   +---+---+---+---+---+---+---+---+'), nl,
@@ -17,7 +16,9 @@ print_board([R1, R2, R3, R4, R5, R6, R7, R8]) :-
     print_row(R7, 2),
     write('   +---+---+---+---+---+---+---+---+'), nl,
     print_row(R8, 1),
-    write('   +---+---+---+---+---+---+---+---+'), nl.
+    write('   +---+---+---+---+---+---+---+---+'), nl,
+    write('     a   b   c   d   e   f   g   h'), nl.
+
 
 % Print a single row with pieces
 print_row(Row, RowNumber) :-

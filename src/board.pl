@@ -13,6 +13,17 @@ initialize_board([
     ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
 ]).
 
+test_board([
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', 'p', ' ', ' ', ' '],
+    [' ', ' ', 'p', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', 'p', 'Q', ' ', ' ', ' '],
+    [' ', ' ', ' ', 'p', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', 'p', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+]).
+
 
 % -------------------------------------------------------------------------------------------------------
 %                                          Board properties
@@ -28,30 +39,44 @@ co_empty(Co, Board) :-
     get(Co, Board, Square),
     empty(Square).
 
+co_taken(Co, Board) :-
+    get(Co, Board, Square),
+    piece(Square).
 
-% column_through_co((_, C), Coords)        :- findall(Co, on_column(C, Co), Coords).
-% row_through_co((R, _), Coords)           :- findall(Co, on_row(R, Co), Coords).
 
-% diagonal_through_co((R, C), Coords)      :- 
-%     N is R - C,
-%     findall(Co, on_diagonal(N, Co), Coords).
 
-% anti_diagonal_through_co((R, C), Coords) :- 
-%     N is R + C,
-%     findall(Co, on_anti_diagonal(N, Co), Coords).
 
-on_same_row((R, _), (R, C)) :- on_board((R, C)).
+% If two coordinates are on the same Axis.
+on_same(Axis, From, To) :- 
+    on_board(From), on_board(To),
+    on_same_help(Axis, From, To).
 
-on_same_column((_, C), (R, C)) :- on_board((R, C)).
+on_same_help(row,           (R, _), (R, _)).
+on_same_help(column,        (_, C), (_, C)).
+on_same_help(anti_diagonal, (R1, C1), (R2, C2)) :- R1 + C1 =:= R2 + C2.
+on_same_help(diagonal,      (R1, C1), (R2, C2)) :- R1 - C1 =:= R2 - C2.
 
-on_same_anti_diagonal((R1, C1), (R2, C2)) :- 
-    on_board((R1, C1)), on_board((R2, C2)),
-    R1 + C1 =:= R2 + C2.
 
-on_same_diagonal((R1, C1), (R2, C2)) :- 
-    on_board((R1, C1)), on_board((R2, C2)),
-    R1 - C1 =:= R2 - C2.
+% In between: If Coordinate `Co` is between `Co1` and `Co2` on axis `Axis`.
+in_between_on(Axis, Co, Co1, Co2) :-
+    on_same(Axis, Co, Co1),
+    on_same(Axis, Co1, Co2),
+    in_between_on_help(Axis, Co, Co1, Co2).
 
+in_between_on_help(row, (_, C), (_, C1), (_, C2)) :- between_non_inclusive(C, C1, C2), !.
+in_between_on_help(_,   (R, _), (R1, _), (R2, _)) :- between_non_inclusive(R, R1, R2).
+
+between_non_inclusive(Z, X, Y) :- X < Z, Z < Y.
+between_non_inclusive(Z, X, Y) :- Y < Z, Z < X.
+
+% `Co1` and `Co2` can see eachother on `Axis`.
+in_sight(Axis, Co1, Co2, Board) :- 
+    on_board(Co1), on_board(Co2),
+    on_same(Axis, Co1, Co2),
+    forall(
+        in_between_on(Axis, Co, Co1, Co2), % For all coordinates `Co` between `Co1` and `Co2`,
+        co_empty(Co, Board)                % `Co` must be empty.
+    ).
 
 % -------------------------------------------------------------------------------------------------------
 %                                          Board actions
@@ -74,23 +99,3 @@ move(FromPos, ToPos, Board, NewBoard) :-
     get(FromPos, Board, Piece),
     remove(FromPos, Board, RemovedBoard),
     place(ToPos, Piece, RemovedBoard, NewBoard).
-
-
-split_at_Co(Axis, Co, Coords) :- 
-    append(_, [Co|Coords], Axis).
-
-split_at_Co(Axis, Co, ReversedCoords) :- 
-    append(Coords, [Co|_], Axis),
-    reverse(Coords, ReversedCoords).
-
-
-take_until_not_empty(Board, [Co|RestInput], [Co|RestOutput]) :-
-    co_empty(Co, Board),
-    take_until_not_empty(Board, RestInput, RestOutput), !.
-take_until_not_empty(_, [Co|_], [Co]).
-
-
-open_path_moves(Board, Axis, PieceCo, OpenPathMoves) :- 
-    split_at_Co(Axis, PieceCo, Range),
-    take_until_not_empty(Board, Range, OpenPathMoves).
-
