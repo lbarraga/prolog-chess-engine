@@ -17,12 +17,13 @@ print_board([R1, R2, R3, R4, R5, R6, R7, R8]) :-
     write('   +---+---+---+---+---+---+---+---+'), nl,
     print_row(R8, 1),
     write('   +---+---+---+---+---+---+---+---+'), nl,
-    write('     a   b   c   d   e   f   g   h'), nl.
+    write('     0   1   2   3   4   5   6   7'), nl.
 
 
 % Print a single row with pieces
 print_row(Row, RowNumber) :-
-    write(' '), write(RowNumber), write(' '),
+    NewNumber is 8 - RowNumber,
+    write(' '), write(NewNumber), write(' '),
     print_pieces(Row),
     write('|'), nl.
 

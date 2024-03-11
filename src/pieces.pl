@@ -1,7 +1,35 @@
-white(Piece) :- member(Piece, ['r','n','b','q','k', 'p']).
-black(Piece) :- member(Piece, ['R','N','B','Q','K', 'P']).
+black(Piece) :- member(Piece, ['r','n','b','q','k', 'p']).
+white(Piece) :- member(Piece, ['R','N','B','Q','K', 'P']).
+
+% Define piece names
+name('r', rook). name('R', rook).
+name('n', knight). name('N', knight).
+name('b', bishop). name('B', bishop).
+name('q', queen). name('Q', queen).
+name('k', king). name('K', king).
+name('p', pawn). name('P', pawn).
+
+color(Piece, white) :- white(Piece).
+color(Piece, black) :- black(Piece).
 
 piece(Piece) :- black(Piece).
 piece(Piece) :- white(Piece).
 
 empty(' ').
+
+%
+pawn_direction(white, -1).
+pawn_direction(black, 1).
+
+pawn_start_row(white, 6).
+pawn_start_row(black, 1).
+
+opponent(white, black).
+opponent(black, white).
+
+could_capture(_, CapturedPiece) :- empty(CapturedPiece).
+could_capture(CapturingPiece, CapturedPiece) :-
+    color(CapturingPiece, Capturingcolor),
+    color(CapturedPiece, CapturedColor),
+    opponent(Capturingcolor, CapturedColor).
+
