@@ -13,15 +13,27 @@
 % To mag niet van het eigen kleur zijn
 % Er moet een stuk staan op de from plaats
 
-can_move(From, To, Board) :-
+uber_can_move(From, To, Color, Board) :-
+    super_can_move(From, To, Color, Board),
+    move(From, To, Board, NewBoard),    % Get the board on which the desired move was made.
+    color_of_co(From, Board, Color),
+    \+ king_in_check(NewBoard, Color).  % The own king cannot be in check in this position.
+    
+
+super_can_move(From, To, Color, Board) :-
     get(From, Board, FromPiece),
+    color(FromPiece, Color),
     get(To, Board, ToSquare),
-    could_capture(FromPiece, ToSquare),
-    name(FromPiece, FromName),
-    can_move(FromName, From, To, Board).
+    name(FromPiece, FromName),               
+    could_capture(FromPiece, ToSquare),     % Atacking square must be empty or of opposite color.
+    can_move(FromName, From, To, Board).    % 
 
 
-
+king_in_check(Board, Color) :- 
+    king(Color, King),
+    get(KingCo, Board, King),
+    opponent(Color, OpponentColor),
+    uber_can_move(_, KingCo, OpponentColor, Board).
 
 
 % -------------------------------------------------- Rook -------------------------------------------------

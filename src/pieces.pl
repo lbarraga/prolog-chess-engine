@@ -9,6 +9,9 @@ name('q', queen). name('Q', queen).
 name('k', king). name('K', king).
 name('p', pawn). name('P', pawn).
 
+king(black, 'k').
+king(white, 'K').
+
 color(Piece, white) :- white(Piece).
 color(Piece, black) :- black(Piece).
 
