@@ -12,6 +12,10 @@
 % koning mag niet schaak staan, 
 % To mag niet van het eigen kleur zijn
 % Er moet een stuk staan op de from plaats
+uber_move(From, To, Color, Board, NewBoard) :- 
+    uber_can_move(From, To, Color, Board),
+    move(From, To, Board, NewBoard).
+
 
 uber_can_move(From, To, Color, Board) :-
     super_can_move(From, To, Color, Board),
@@ -33,7 +37,16 @@ king_in_check(Board, Color) :-
     king(Color, King),
     get(KingCo, Board, King),
     opponent(Color, OpponentColor),
-    uber_can_move(_, KingCo, OpponentColor, Board).
+    super_can_move(_, KingCo, OpponentColor, Board).
+
+is_checkmate(Board, Color) :- 
+    king_in_check(Board, Color),
+    \+ uber_can_move(_, _, Color, Board).
+
+
+is_stalemate(Board, ToMoveColor) :-
+    \+ king_in_check(Board, ToMoveColor),
+    \+ uber_can_move(_, _, ToMoveColor, Board).
 
 
 % -------------------------------------------------- Rook -------------------------------------------------

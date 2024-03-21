@@ -36,3 +36,12 @@ could_capture(CapturingPiece, CapturedPiece) :-
     color(CapturedPiece, CapturedColor),
     opponent(Capturingcolor, CapturedColor).
 
+
+% Piece values
+value(pawn, 1).
+value(queen, 9).
+value(rook, 5).
+value(bishop, 3).
+value(knight, 3).
+value(king, 0).
+
