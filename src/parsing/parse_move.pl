@@ -1,12 +1,10 @@
-% Define the grammar rules for each piece
-minor_piece --> bishop; knight.
-major_piece --> rook; queen.
+:- module(parse_move, [top_move/2]).
 
-piece --> minor_piece; major_piece; king.
-promoting_piece --> minor_piece; major_piece.
+promoting_piece --> bishop; knight; rook; queen.    % A piece which can be promoted to.
+piece --> promoting_piece; king.                    % A general piece on the board.
 
 
-% Define individual rules for each chess piece
+% Define individual characters for each chess piece.
 king   --> "K".
 bishop --> "B".
 knight --> "N".
@@ -24,10 +22,9 @@ takes --> "x".
 promotes --> "=".
 check --> "+".
 checkmate --> "#".
-short_castle --> "O-O".   % This is already using double quotes
-long_castle --> "O-O-O".  % This is already using double quotes
-disambiguation --> file; rank.
-disambiguation --> file, rank.
+short_castle --> "O-O".
+long_castle --> "O-O-O".
+disambiguation --> file; rank; coordinate.
 
 
 % Unified rule for the destination part of a move, which includes the coordinate and an optional promotion
@@ -37,7 +34,7 @@ destination --> coordinate, optional_promotion.
 move --> piece, optional_disambiguation, optional_takes, destination.   % General piece move.
 move --> file, takes, destination.                                      % Pawn capture.
 move --> destination.                                                   % Pawn move.
-move --> short_castle; long_castle.                                     % special move.
+move --> short_castle; long_castle.                                     % Special move.
 
 % Define components of moves
 optional_disambiguation --> disambiguation; [].
