@@ -1,5 +1,5 @@
-:- module(san_test, [test/0]).
-:- use_module(parse_move).
+:- module(san_move_test, [test/0]).
+:- use_module('../../src/parsing/parse_move').
 
 read_line(Stream, Line) :-
     read_line_to_codes(Stream, LineCodes),
