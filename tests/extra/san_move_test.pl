@@ -1,4 +1,4 @@
-:- module(san_move_test, [test/0]).
+:- module(san_move_test, [test_file/1]).
 :- use_module('../../src/parsing/parse_move').
 
 read_line(Stream, Line) :-
@@ -20,10 +20,7 @@ test_lines(Stream) :-
     !,
     (   test_parse(Line)
     ->  true
-    ;   writeln('Failed to parse: '), writeln(Line), fail
+    ;   writeln('[FAIL] '), writeln(Line), fail
     ),
     test_lines(Stream).
 test_lines(_).
-
-test :-
-    test_file('src/parsing/all_SAN.txt').

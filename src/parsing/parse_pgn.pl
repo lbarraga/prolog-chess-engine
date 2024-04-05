@@ -1,56 +1,28 @@
-:- module(pgn_parser, [parse_pgn_file/1]).
+:- module(parse_pgn, [pgn/2]).
 
-% Entry point for parsing a PGN file.
-parse_pgn --> optional_tags(Tags), moves(Moves), { construct_pgn(Tags, Moves, PGN) }, eos, { writeln(PGN) }.
+:- use_module(library(pio)).
+:- use_module(library(dcg/basics)).
 
-% Rule for parsing optional tags followed by an empty line.
-optional_tags(Tags) --> tags(Tags), blanks; { Tags = [] }.
+% Define the grammar for parsing PGN files.
+pgn --> tags, movetext, result, blanks.
 
-% Rule for parsing a sequence of tags.
-tags([Tag|Tags]) --> tag(Tag), blanks, tags(Tags).
-tags([]) --> [].
+tags --> tag, tags.
+tags --> [].
+tags --> eol.
 
-% Rule for parsing individual tags.
-tag(white(Name)) --> "[White \"", string(Name), "\"]".
-tag(black(Name)) --> "[Black \"", string(Name), "\"]".
-tag(rules(Rules)) --> "[Rules \"", string(Rules), "\"]".
-tag(result(Result)) --> "[Result \"", string(Result), "\"]".
+tag --> "[", string_without("]", _), "]", eol.
 
-% Helper rule for parsing a quoted string.
-string(Str) --> string_inner(StrChars), { atom_chars(Str, StrChars) }.
+move_nr --> digits(_), ".".
+plie --> blanks, nonblanks(_), blanks.
 
-% Helper rule for parsing the characters inside a string.
-string_inner([Char|Chars]) --> [Char], { Char \= '"' }, string_inner(Chars).
-string_inner([]) --> [].
+move --> move_nr, plie, plie.
+move_plie --> move_nr, plie.
 
-% Rule for parsing the movetext section, which can include comments.
-moves(Moves) --> move_sequence(Moves).
+movetext --> move, movetext.
+movetext --> move_plie.
+movetext --> [].
 
-% Rule for parsing a sequence of moves with optional comments.
-move_sequence([Move|Moves]) --> move(Move), blanks, !, move_sequence(Moves).
-move_sequence([]) --> [].
-
-% Rule for an individual move, including optional comments.
-move(move(Move, Comment)) --> top_move(Move), optional_comment(Comment).
-
-% Placeholder for 'top_move' - this should be replaced with your actual move parsing DCG.
-top_move(Move) --> [M], { char_type(M, alpha) }, { atom_chars(Move, [M]) }.
-
-% Optional comment parsing.
-optional_comment(Comment) --> "{", string_inner(CommentChars), "}", { atom_chars(Comment, CommentChars) }; { Comment = '' }.
-
-% Helper rule for end of string.
-eos([], []).
-
-% Construct the PGN representation from parsed tags and moves.
-construct_pgn(Tags, Moves, PGN) :- PGN = pgn{tags: Tags, moves: Moves}.
-
-% Wrapper predicate for phrase_from_file
-parse_pgn_file(FilePath) :-
-    phrase_from_file(parse_pgn, FilePath).
-
-% Helper rules for whitespace.
-blanks --> blank, blanks.
-blanks --> [].
-
-blank --> [C], { char_type(C, space) ; C == '\n' }.
+result --> "1-0".
+result --> "0-1".
+result --> "1/2-1/2".
+result --> [].
