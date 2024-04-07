@@ -1,4 +1,4 @@
-:- module(parse_move, [top_move/2]).
+:- module(parse_san, [san/2]).
 
 promoting_piece --> bishop; knight; rook; queen.    % A piece which can be promoted to.
 piece --> promoting_piece; king.                    % A general piece on the board.
@@ -45,4 +45,4 @@ optional_promotion --> promotes, promoting_piece; [].
 optional_check_or_checkmate --> check; checkmate; [].
 
 % Top-level rule for moves including post-move conditions
-top_move --> move, optional_check_or_checkmate.
+san --> move, optional_check_or_checkmate.

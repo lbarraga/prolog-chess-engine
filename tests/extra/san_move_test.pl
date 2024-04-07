@@ -1,5 +1,5 @@
 :- module(san_move_test, [test_file/1]).
-:- use_module('../../src/parsing/parse_move').
+:- use_module('../../src/parsing/parse_san', [san/2]).
 
 read_line(Stream, Line) :-
     read_line_to_codes(Stream, LineCodes),
@@ -8,7 +8,7 @@ read_line(Stream, Line) :-
 
 test_parse(Line) :-
     string_codes(Line, Codes),
-    phrase(top_move, Codes), !.
+    phrase(san, Codes), !.
 
 test_file(FileName) :-
     open(FileName, read, Stream),
