@@ -1,4 +1,4 @@
-% Very low score indeicating the player has lost.
+% Very low score indicating the player has lost.
 worst_score(white, -1000).
 worst_score(black, 1000).
 

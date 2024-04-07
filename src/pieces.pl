@@ -32,9 +32,9 @@ opponent(black, white).
 
 could_capture(_, CapturedPiece) :- empty(CapturedPiece).
 could_capture(CapturingPiece, CapturedPiece) :-
-    color(CapturingPiece, Capturingcolor),
+    color(CapturingPiece, CapturingColor),
     color(CapturedPiece, CapturedColor),
-    opponent(Capturingcolor, CapturedColor).
+    opponent(CapturingColor, CapturedColor).
 
 
 % Piece values
