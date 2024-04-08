@@ -8,7 +8,7 @@ file_contains(FileName, Codes) :-
 
 test_pgn_file(File) :-
     file_contains(File, Codes),
-    (   phrase(pgn(), Codes)
+    (   phrase(pgn(_), Codes)
     ->  format('[OK] ~w~n', [File]), true  % Continue if parsing is successful
     ;   format('[FAIL] ~w~n', [File]), fail  % Halt with error if parsing fails
     ).

@@ -1,13 +1,13 @@
-:- module(parse_pgn, [pgn/2]).
+:- module(parse_pgn, [pgn/3]).
 
-:- use_module(parse_san, [san/2]).
+:- use_module(parse_san, [san/3]).
 :- use_module(library(pio)).
 :- use_module(library(dcg/basics)).
 
 between(Left, Between, Right) --> Left, string_without(Right, Between), Right.
 
 % Define the grammar for parsing PGN files.
-pgn --> tags, movetext, result, blanks.
+pgn(Moves) --> tags, movetext(Moves), result, blanks.
 
 tags --> tag, tags.
 tags --> [].
@@ -16,16 +16,17 @@ tags --> eol.
 tag --> between("[", _, "]"), eol.
 
 move_nr --> digits(_), ".".
-plie --> blanks, san, blanks.
+plie(San) --> blanks, san(San), blanks.
 
-move --> move_nr, plie, plie.
-move_plie --> move_nr, plie.
+move(San1, San2) --> move_nr, plie(San1), plie(San2).
+move_plie(San) --> move_nr, plie(San).
 
-movetext --> move, movetext.
-movetext --> move_plie.
-movetext --> [].
+movetext([turn(San1, San2) | Rest]) --> move(San1, San2), movetext(Rest).
+movetext([turn(San, no_move)]) --> move_plie(San).
+movetext([]) --> [].
 
 result --> "1-0".
 result --> "0-1".
 result --> "1/2-1/2".
+result --> "*".
 result --> [].
