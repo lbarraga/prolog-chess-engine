@@ -1,5 +1,6 @@
 :- module(parse_to_board, [parse_to_board/3]).
 
+parse_to_board([], Board, Board).
 parse_to_board([turn(WhitePlie, BlackPlie) | Rest], StartBoard, EndBoard) :-
     write('White: '),
     parse_plie(white, WhitePlie, StartBoard, WhiteTempBoard),
@@ -8,13 +9,10 @@ parse_to_board([turn(WhitePlie, BlackPlie) | Rest], StartBoard, EndBoard) :-
     parse_to_board(Rest, BlackTempBoard, EndBoard).
 
 
+parse_plie(_, no_move, Board, Board).
 parse_plie(Color, plie(PieceName, co(R, C), Disambiguation), StartBoard, EndBoard) :-
-    writeln(co(R, C)),
     uber_move(From, (R, C), Color, StartBoard, EndBoard),   % All Coordinates of piece that can move to destination
-    writeln(From),
-    get(From, Board, Piece),
-    name(Piece, Name).         % Piece must have same name as in the plie
-    writeln(Name),
+    get(From, StartBoard, Piece), name(Piece, PieceName),   % Piece must have same name as in the plie
     disambiguate(From, Disambiguation).                     % Disambiguate the piece
 
 disambiguate((_, Col), file(Col)).       % Disambiguation on file (e.g. Rfxe1)

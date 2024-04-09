@@ -2,12 +2,18 @@ black(Piece) :- member(Piece, ['r','n','b','q','k', 'p']).
 white(Piece) :- member(Piece, ['R','N','B','Q','K', 'P']).
 
 % Define piece names
-name('r', rook). name('R', rook).
-name('n', knight). name('N', knight).
-name('b', bishop). name('B', bishop).
-name('q', queen). name('Q', queen).
-name('k', king). name('K', king).
-name('p', pawn). name('P', pawn).
+name('r', rook).
+name('R', rook).
+name('n', knight).
+name('N', knight).
+name('b', bishop).
+name('B', bishop).
+name('q', queen).
+name('Q', queen).
+name('k', king).
+name('K', king).
+name('p', pawn).
+name('P', pawn).
 
 king(black, 'k').
 king(white, 'K').
