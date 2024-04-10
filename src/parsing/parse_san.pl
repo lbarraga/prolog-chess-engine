@@ -31,14 +31,14 @@ disambiguation(DisAmb) --> coordinate(DisAmb).
 
 
 % Unified rule for the destination part of a move, which includes the coordinate and an optional promotion
-destination(Co) --> coordinate(Co), optional_promotion.
+destination(Co, Prom) --> coordinate(Co), optional_promotion(Prom).
 
 % Generalized move rules
-move(plie(P, Co, D)) --> piece(P), optional_disambiguation(D), optional_takes, destination(Co). % General piece move.
-move(plie(pawn, Co, file(F))) --> file(F), takes, destination(Co).                                    % Pawn capture.
-move(plie(pawn, Co, none)) --> destination(Co).                                                 % Pawn move.
-move(castle(short_castle)) --> short_castle.                                                    % Special move.
-move(castle(long_castle)) --> long_castle.                                                      % Special move.
+move(plie(P, Co, D, Prom)) --> piece(P), optional_disambiguation(D), optional_takes, destination(Co, Prom). % General piece move.
+move(plie(pawn, Co, file(F), Prom)) --> file(F), takes, destination(Co, Prom).                              % Pawn capture.
+move(plie(pawn, Co, none, Prom)) --> destination(Co, Prom).                                                 % Pawn move.
+move(castle(short_castle)) --> short_castle.                                                                % Special move.
+move(castle(long_castle)) --> long_castle.                                                                  % Special move.
 
 % Define components of moves
 optional_disambiguation(DisAmb) --> disambiguation(DisAmb).
@@ -47,8 +47,8 @@ optional_disambiguation(none) --> [].
 optional_takes --> takes.
 optional_takes --> [].
 
-optional_promotion --> promotes, promoting_piece(_).
-optional_promotion --> [].
+optional_promotion(P) --> promotes, promoting_piece(P).
+optional_promotion(no_promotion) --> [].
 
 % Post-move conditions
 optional_check_or_checkmate --> check; checkmate; [].

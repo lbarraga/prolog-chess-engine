@@ -39,10 +39,17 @@ between_squares(black, short_castle, (0, 4), (0, 5), (0, 6), (0, 7)).
 info_ok_for_castling(short_castle, can_castle_short, _).
 info_ok_for_castling(long_castle, _, can_castle_long).
 
-% koning mag niet schaak staan, 
-% To mag niet van het eigen kleur zijn
-% Er moet een stuk staan op de from plaats
-uber_move(From, To, Color, Board, NewBoard) :- 
+uber_move_promotion(From, To, Color, Promotion, Board, NewBoard) :-
+    uber_move(From, To, Color, Board, TempBoard),
+    do_promotion(To, Color, Promotion, TempBoard, NewBoard).
+
+do_promotion(_, _, no_promotion, Board, Board).
+do_promotion(To, Color, Promotion, Board, NewBoard) :-
+    name(PromotionPiece, Promotion),
+    color(PromotionPiece, Color),
+    place(To, PromotionPiece, Board, NewBoard).
+
+uber_move(From, To, Color, Board, NewBoard) :-
     uber_can_move(From, To, Color, Board),
     move(From, To, Board, NewBoard).
 
@@ -60,7 +67,7 @@ super_can_move(From, To, Color, Board) :-
     get(To, Board, ToSquare),
     name(FromPiece, FromName),               
     could_capture(FromPiece, ToSquare),     % Attacking square must be empty or of opposite color.
-    can_move(FromName, From, To, Board).    % 
+    can_move(FromName, From, To, Board).    %
 
 
 king_in_check(Board, Color) :- 
@@ -96,19 +103,19 @@ can_move(queen, From, To, Board) :- can_move(rook, From, To, Board).
 
 % -------------------------------------------------  Knight  -----------------------------------------------
 
-can_move(knight, (R1, C1), (R2, C2), _) :- 
+can_move(knight, (R1, C1), (R2, C2), _) :-
     on_board((R1, C1)), on_board((R2, C2)),
     abs(R1 - R2) =:= 1, 
     abs(C2 - C1) =:= 2.
 
-can_move(knight, (R1, C1), (R2, C2), _) :- 
+can_move(knight, (R1, C1), (R2, C2), _) :-
     on_board((R1, C1)), on_board((R2, C2)),
     abs(R2 - R1) =:= 2, 
     abs(C2 - C1) =:= 1.
 
 % -------------------------------------------------  King  -----------------------------------------------
 
-can_move(king, (R1, C1), (R2, C2), _) :- 
+can_move(king, (R1, C1), (R2, C2), _) :-
     on_board((R1, C1)), on_board((R2, C2)),
     abs(R2 - R1) =< 1, 
     abs(C2 - C1) =< 1.
