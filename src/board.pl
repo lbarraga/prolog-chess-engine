@@ -157,7 +157,7 @@ remove(Coordinate, Board, NewBoard) :- replace2D(Coordinate, ' ', Board, NewBoar
 place(Coordinate, Piece, Board, NewBoard) :- replace2D(Coordinate, Piece, Board, NewBoard).
 
 % Move a piece from one position to another position 
-move(FromPos, ToPos, Board, NewBoard) :-
+move_unsafe(FromPos, ToPos, Board, NewBoard) :-
     get(FromPos, Board, Piece),
     remove(FromPos, Board, RemovedBoard),
     place(ToPos, Piece, RemovedBoard, NewBoard).
