@@ -1,6 +1,20 @@
 :- use_module(list_utils, [replace2D/4, split/4]).
 :- use_module(library(clpfd), [transpose/2]).
 
+init_state(state(
+    Board,
+    info(
+        castling_info(
+            (long, short),
+            (long, short)
+        ),
+        no_ep
+    ),
+    white)
+) :- initialize_board(Board).
+
+test_state(state(Board, info(castling_info((long, short), (long, short)), no_ep), white)) :- test_board(Board).
+
 % The initial setup of a chess board.
 initialize_board([
     ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
@@ -14,14 +28,14 @@ initialize_board([
 ]).
 
 test_board([
-    ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
-    ['p', 'p', 'p', ' ', 'p', 'p', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', 'N', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'P'],
-    ['P', 'P', 'P', 'P', 'P', 'P', ' ', 'P'],
-    ['R', 'N', 'B', 'Q', 'K', 'B', ' ', 'R']
+    ['r', 'n', 'b', 'q', 'k', 'b', 'n', ' '],
+    [' ', 'p', 'p', 'p', 'p', 'p', 'p', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'r'],
+    ['p', ' ', ' ', ' ', ' ', ' ', ' ', 'p'],
+    ['P', ' ', ' ', ' ', ' ', ' ', ' ', 'P'],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'R'],
+    [' ', 'P', 'P', 'P', 'P', 'P', 'P', ' '],
+    ['R', 'N', 'B', 'Q', 'K', 'B', 'N', ' ']
 ]).
 
 test_board3([
@@ -157,7 +171,7 @@ remove(Coordinate, Board, NewBoard) :- replace2D(Coordinate, ' ', Board, NewBoar
 place(Coordinate, Piece, Board, NewBoard) :- replace2D(Coordinate, Piece, Board, NewBoard).
 
 % Move a piece from one position to another position 
-move_unsafe(FromPos, ToPos, Board, NewBoard) :-
+move_unsafe(move(FromPos, ToPos), Board, NewBoard) :-
     get(FromPos, Board, Piece),
     remove(FromPos, Board, RemovedBoard),
     place(ToPos, Piece, RemovedBoard, NewBoard).

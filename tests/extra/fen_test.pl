@@ -23,12 +23,12 @@ test_pgn_fen_pair((PgnFile, FenFile)) :-
     atom_concat('tests/extra/test_fens/', FenFile, FullFenPath),
 
     % Use full paths to parse the PGN file
-    initialize_board(StartBoard),
+    init_state(StartState),
     parse_file(FullPgnPath, Moves),
 
     % Attempt to parse moves into a board, handle failure
-    ( parse_to_board(Moves, StartBoard, EndBoard) ->
-        board_to_fen(EndBoard, GeneratedFenRaw),
+    ( parse_to_board(Moves, StartState, EndState) ->
+        board_to_fen(EndState, GeneratedFenRaw),
         trim(GeneratedFenRaw, GeneratedFen),
 
         % Read and trim the expected FEN
@@ -55,13 +55,6 @@ read_fen_from_file(FenFile, Fen) :-
     close(Stream).
 
 
-file_to_fen(File, Fen) :-
-    initialize_board(StartBoard),
-    parse_file(File, Moves),
-    parse_to_board(Moves, StartBoard, EndBoard),
-    board_to_fen(EndBoard, Fen).
-
-
 list_directory(Dir, Files) :- directory_files(Dir, [_, _ | Files]).
 
 zip([], [], []).
@@ -74,7 +67,7 @@ test(Files) :-
 
 
 % Convert board to FEN string
-board_to_fen(Board, FEN) :-
+board_to_fen(state(Board, _, _), FEN) :-
     maplist(row_to_fen_string, Board, FENParts),
     atomic_list_concat(FENParts, '/', FEN).
 

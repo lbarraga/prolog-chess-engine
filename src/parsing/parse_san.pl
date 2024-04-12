@@ -37,8 +37,8 @@ destination(Co, Prom) --> coordinate(Co), optional_promotion(Prom).
 move(plie(P, Co, D, Prom)) --> piece(P), optional_disambiguation(D), optional_takes, destination(Co, Prom). % General piece move.
 move(plie(pawn, Co, file(F), Prom)) --> file(F), takes, destination(Co, Prom).                              % Pawn capture.
 move(plie(pawn, Co, none, Prom)) --> destination(Co, Prom).                                                 % Pawn move.
-move(castle(short_castle)) --> short_castle.                                                                % Special move.
-move(castle(long_castle)) --> long_castle.                                                                  % Special move.
+move(castle(short)) --> short_castle.                                                                % Special move.
+move(castle(long)) --> long_castle.                                                                  % Special move.
 
 % Define components of moves
 optional_disambiguation(DisAmb) --> disambiguation(DisAmb).
