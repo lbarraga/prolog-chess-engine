@@ -30,8 +30,8 @@ empty(' ').
 pawn_direction(white, -1).
 pawn_direction(black, 1).
 
-pawn_start_row(white, 6).
-pawn_start_row(black, 1).
+pawn_start_row(white, (6, _)).
+pawn_start_row(black, (1, _)).
 
 opponent(white, black).
 opponent(black, white).

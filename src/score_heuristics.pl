@@ -20,7 +20,7 @@ score_heuristic(Board, _, Score) :-
     Score is WhiteScore - BlackScore.
 
 
-% Give the score of a color by looking at, pieces and (center) square control.
+% Give the score of a color by looking at pieces and (center) square control.
 score_heuristic_color(Board, Color, Score) :- 
     piece_score(Color, Board, PieceScore),
     amount_of_center_controls(Color, Board, CenterControl),
