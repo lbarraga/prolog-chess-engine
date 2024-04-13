@@ -1,6 +1,6 @@
 :- initialization(main).
 :- use_module('parsing/parse_pgn', [pgn/3]).
-:- use_module('parsing/parse_to_board', [parse_to_board/3]).
+:- use_module('parsing/parse_to_board', [parse_to_board/4]).
 
 parse_file(FileName, Parsed) :-
     % Open the file

@@ -1,9 +1,6 @@
 legal_move(castle(Type), State, NewState) :-
     castle(Type, State, NewState).
 
-legal_move(promotion(From, To, no_promotion), State, NewState) :-
-    legal_move(move(From, To), State, NewState).
-
 legal_move(promotion(From, To, PromotingPieceName), state(Board, Info, Color), state(NewBoard, NewInfo, Opponent)) :-
     legal_move(move(From, To), state(Board, Info, Color), state(TempBoard, NewInfo, Opponent)),
     % Check if the piece moved is a pawn
@@ -73,8 +70,8 @@ disable_en_passant(info(Castling, _), info(Castling, no_ep)).
 disable_short_castle((Long, _), (Long, no_short)).
 disable_long_castle((_, Short), (no_long, Short)).
 
-disable_castling(white, info(castling_info(_, Black), EP), info(castling_info((no_long, no_short), Black), EP)).
-disable_castling(black, info(castling_info(White, _), EP), info(castling_info(White, (no_long, no_short)), EP)).
+disable_castling(white, info(castling_info(_, Black), _), info(castling_info((no_long, no_short), Black), no_ep)).
+disable_castling(black, info(castling_info(White, _), _), info(castling_info(White, (no_long, no_short)), no_ep)).
 
 update_castling_color(white, Old, New, castling_info(Old, Black), castling_info(New, Black)).
 update_castling_color(black, Old, New, castling_info(White, Old), castling_info(White, New)).
@@ -118,9 +115,12 @@ castle(Type, state(Board, Info, Color), state(NewBoard, NewInfo, Opponent)) :-
 can_castle(Type, state(Board, info(Castling, _), Color)) :-
     \+ king_in_check(state(Board, _, Color)),
     castling_reqs(Color, Type, KingPos, OneNextToKingPos, TwoNextToKingPos, RookPos, Castling),
+    co_empty(OneNextToKingPos, Board), co_empty(TwoNextToKingPos, Board),
     legal_move(move(RookPos, OneNextToKingPos), state(Board, _, Color), _),                         % Rook could move next to king.
     legal_move(move(KingPos, OneNextToKingPos), state(Board, _, Color), state(TempBoard, _, _)),    % King could move one square closer to rook.
     legal_move(move(OneNextToKingPos, TwoNextToKingPos), state(TempBoard, _, Color), _).            % King could move two squares closer to rook.
+
+
 
 %                              King   King+1  King+2   Rook
 castling_reqs(white, long,  (7, 4), (7, 3), (7, 2), (7, 0), castling_info((long, _), _)).
