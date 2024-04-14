@@ -1,3 +1,20 @@
+:- module(board, [
+    init_state/1,
+    test_state/1,
+    on_board/1,
+    co_empty/2,
+    co_taken/2,
+    color_of_co/3,
+    value_of_piece_on_board/3,
+    on_same/3,
+    in_between_on/4,
+    in_sight/4,
+    get/3,
+    remove/3,
+    place/4,
+    move_unsafe/3
+]).
+:- use_module(pieces).
 :- use_module(list_utils, [replace2D/4, split/4]).
 :- use_module(library(clpfd), [transpose/2]).
 

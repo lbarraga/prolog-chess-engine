@@ -1,3 +1,19 @@
+:- module(pieces, [
+    opponent/2,
+    king/2,
+    black/1,
+    white/1,
+    name/2,
+    color/2,
+    piece/1,
+    empty/1,
+    pawn_direction/2,
+    pawn_start_row/2,
+    could_capture/2,
+    value/2
+]).
+
+
 black(Piece) :- member(Piece, ['r','n','b','q','k', 'p']).
 white(Piece) :- member(Piece, ['R','N','B','Q','K', 'P']).
 

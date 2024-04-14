@@ -1,3 +1,9 @@
+:- module(moves_main, [legal_move/3, king_in_check/1]).
+:- use_module('../pieces.pl').
+:- use_module('../board.pl').
+:- use_module(piece_rules).
+:- use_module(castling).
+
 legal_move(castle(Type), State, NewState) :-
     castle(Type, State, NewState).
 
@@ -37,7 +43,6 @@ opposing_color_or_empty(move(From, To), state(Board, _, Color)) :-
     color(FromPiece, Color),
     get(To, Board, ToSquare),
     could_capture(FromPiece, ToSquare).
-
 
 
 king_in_check(state(Board, _, Color)) :-

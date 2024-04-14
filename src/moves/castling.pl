@@ -1,3 +1,8 @@
+:- module(castling, [castle/3]).
+:- use_module('../pieces.pl').
+:- use_module('../board.pl').
+:- use_module(moves_main).
+
 castle(Type, state(Board, Info, Color), state(NewBoard, NewInfo, Opponent)) :-
     opponent(Color, Opponent),
     disable_castling(Color, Info, NewInfo),
@@ -25,5 +30,3 @@ castling_reqs(black, short, (0, 4), (0, 5), (0, 6), (0, 7), castling_info(_, (_,
 
 disable_castling(white, info(castling_info(_, Black), _), info(castling_info((no_long, no_short), Black), no_ep)).
 disable_castling(black, info(castling_info(White, _), _), info(castling_info(White, (no_long, no_short)), no_ep)).
-
-

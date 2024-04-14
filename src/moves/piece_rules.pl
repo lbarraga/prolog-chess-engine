@@ -1,10 +1,29 @@
+% pieces.pl, board.pl
+:- module(piece_rules, [basic_piece_move_unsafe/4]).
+:- use_module('../pieces.pl').
+:- use_module('../board.pl').
+:- use_module(update_info).
+
 basic_piece_move_unsafe(Name, Move, state(Board, Info, ToMove), state(NewBoard, NewInfo, Opponent)) :-
-    opponent(ToMove, Opponent),
-    piece_rule(Name, Move, state(Board, Info, ToMove)),
-    move_unsafe(Move, Board, TempBoard),
+    opponent(ToMove, Opponent),                         % Get opponent color
+    piece_rule(Name, Move, state(Board, Info, ToMove)), % Check if move is valid for piece
+    move_unsafe(Move, Board, TempBoard),                % Move piece on board
     update_info(Name, Move, ToMove, Info, NewInfo),
     check_en_passant(Move, Info, TempBoard, NewBoard).
 
+% If the move is an en passant capture, remove the captured pawn
+check_en_passant(move(_, To), info(_, To), Board, NewBoard) :-
+    get(To, Board, Piece),
+    name(Piece, pawn),
+    one_after_en_passant_square(To, After),
+    remove(After, Board, NewBoard), !.
+
+check_en_passant(_, _, Board, Board).
+
+en_passant_square((2, _)).
+en_passant_square((5, _)).
+one_after_en_passant_square((5, C), (4, C)).
+one_after_en_passant_square((2, C), (3, C)).
 
 % ------------------------------------------------- Rook -----------------------------------------------
 piece_rule(rook, move(From, To), state(Board, _, _)) :- in_sight(row, From, To, Board).
@@ -39,15 +58,15 @@ piece_rule(pawn, move(From, To), state(Board, info(_, EP), _)) :-
     on_board(From), on_board(To),
     color_of_co(From, Board, Color),    % Get color of pawn
     pawn_direction(Color, Direction),   % Get direction of pawn
-    can_pawn_move(Color, Direction, move(From, To), Board, EP).
+    pawn_rule(Color, Direction, move(From, To), Board, EP).
 
 % Basic forward move (1 step)
-can_pawn_move(_, Dir, move(From, OneForward), Board, _) :-
+pawn_rule(_, Dir, move(From, OneForward), Board, _) :-
     one_forward(From, OneForward, Dir),
     co_empty(OneForward, Board).
 
 % Double forward move (2 steps)
-can_pawn_move(Color, Dir, move(From, TwoForward), Board, _) :-
+pawn_rule(Color, Dir, move(From, TwoForward), Board, _) :-
     pawn_start_row(Color, From),        % Pawn must be on starting row
     one_forward(From, OneForward, Dir), % Get one step forward
     two_forward(From, TwoForward, Dir), % Get two steps forward
@@ -55,14 +74,14 @@ can_pawn_move(Color, Dir, move(From, TwoForward), Board, _) :-
     co_empty(TwoForward, Board).        % Two steps forward must be empty
 
 % Capture move
-can_pawn_move(Color, Dir, move(From, To), Board, _) :-
+pawn_rule(Color, Dir, move(From, To), Board, _) :-
     one_diagonal(From, To, Dir),    % To must be one diagonal from From
     opponent(Color, OpponentColor),
     get(To, Board, Piece),
     color(Piece, OpponentColor).    % Piece on attacking square must be of opposite color.
 
 % En Passant
-can_pawn_move(_, Dir, move(From, To), _, To) :- one_diagonal(From, To, Dir).
+pawn_rule(_, Dir, move(From, To), _, To) :- one_diagonal(From, To, Dir).
 
 
 % -------------------------------------------------  Helper  -----------------------------------------------

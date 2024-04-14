@@ -1,4 +1,6 @@
 :- module(parse_to_board, [parse_to_board/4]).
+:- use_module('../pieces.pl').
+:- use_module('../moves/moves_main.pl').
 
 parse_to_board(Plies, StartState, EndState, MoveCounts) :-
     parse_to_board_(1, Plies, StartState, EndState, MoveCounts).
@@ -10,9 +12,7 @@ parse_to_board_(N, [turn(WhitePlie, BlackPlie) | Rest], StartState, EndState, [C
 %     write('White: '), writeln(WhitePlie),
 %     StartState = state(_, Info, _),
 %     writeln(Info),
-
     parse_plie(WhitePlie, StartState, WhiteTempState, CountWhite),
-
 %     WhiteTempState = state(WhiteTempBoard, _, _),
 %     print_board(WhiteTempBoard),
 %     write('Black: '), writeln(BlackPlie),

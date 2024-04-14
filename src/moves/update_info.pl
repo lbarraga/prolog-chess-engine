@@ -1,3 +1,8 @@
+% Pieces.pl and board.pl
+:- module(update_info, [update_info/5]).
+:- use_module('../pieces.pl').
+:- use_module('../pieces.pl').
+
 update_info(Name, Move, Color, info(Castling, EnPassant), info(NewCastling, NewEnPassant)) :-
     update_en_passant(Name, Move, EnPassant, NewEnPassant),
     update_castling_color(Color, ColorCastling, NewColorCastling, Castling, NewCastling),
@@ -31,25 +36,6 @@ disable_long_castle((_, Short), (no_long, Short)).
 
 
 % ----------------------------------- Update en passant -----------------------------------
-
-check_en_passant(move(_, (2, C)), info(_, (2, C)), Board, NewBoard) :-
-    % Check if from is a pawn
-    get((2, C), Board, Piece),
-    name(Piece, pawn),
-    remove((3, C), Board, NewBoard), !.
-
-check_en_passant(move(_, (5, C)), info(_, (5, C)), Board, NewBoard) :-
-    % Check if from is a pawn
-    get((5, C), Board, Piece),
-    name(Piece, pawn),
-    remove((4, C), Board, NewBoard), !.
-
-check_en_passant(_, _, Board, Board).
-
-
-disable_en_passant(info(Castling, _), info(Castling, no_ep)).
-
-
 
 % En passant
 update_en_passant(pawn, move((R1, C), (R3, C)), _, (R2, C)) :-
