@@ -14,8 +14,19 @@
 ]).
 
 
-black(Piece) :- member(Piece, ['r','n','b','q','k', 'p']).
-white(Piece) :- member(Piece, ['R','N','B','Q','K', 'P']).
+black('r').
+black('n').
+black('b').
+black('q').
+black('k').
+black('p').
+
+white('R').
+white('N').
+white('B').
+white('Q').
+white('K').
+white('P').
 
 % Define piece names
 name('r', rook).

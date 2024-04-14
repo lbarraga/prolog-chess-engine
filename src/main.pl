@@ -4,6 +4,7 @@
 :- use_module(prettyprint, [print_board/1]).
 :- use_module(alpha_beta).
 :- use_module('board.pl').
+:- use_module(library(prolog_stack)).
 
 parse_file(FileName, Parsed) :-
     % Open the file
@@ -44,7 +45,7 @@ main :-
     writeln('Board:'),
     print_board(Board), nl,
 
-    % Calculate the best move
-    best_move(FinalState, 1, BestMove),
-    write('Best move: '), writeln(BestMove),
-    halt.
+    % Calculate the best move and profile it
+    profile(best_move(FinalState, 2, BestMove)),
+
+    write('Best move: '), writeln(BestMove).
