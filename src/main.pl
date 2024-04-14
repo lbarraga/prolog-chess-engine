@@ -5,6 +5,7 @@
 :- use_module(alpha_beta).
 :- use_module('board.pl').
 :- use_module(library(prolog_stack)).
+:- use_module(test).
 
 parse_file(FileName, Parsed) :-
     % Open the file
@@ -27,6 +28,8 @@ pretty_print(N, [turn(From, To)|T]) :-
 
 
 main :-
+    play,
+    halt,
     % Extract the filename from the command line arguments
     current_prolog_flag(argv, Argv),
     nth0(0, Argv, FileName),
@@ -48,4 +51,5 @@ main :-
     % Calculate the best move and profile it
     profile(best_move(FinalState, 2, BestMove)),
 
-    write('Best move: '), writeln(BestMove).
+    write('Best move: '), writeln(BestMove),
+    halt.

@@ -1,4 +1,11 @@
-:- module(prettyprint, [print_board/1]).
+:- module(prettyprint, [print_board/1, print_state/1]).
+
+print_state(state(Board, info(castling_info(WhiteCastle, BlackCastle), EnPassant), Color)) :-
+    write('White Castle: '), write(WhiteCastle), nl,
+    write('Black Castle: '), write(BlackCastle), nl,
+    write('En Passant: '), write(EnPassant), nl,
+    write('Current Turn: '), write(Color), nl,
+    print_board(Board).
 
 % Print the board with pieces
 print_board([R1, R2, R3, R4, R5, R6, R7, R8]) :-
