@@ -1,3 +1,17 @@
+:- use_module('../../src/board.pl').
+:- use_module('../../src/parsing/parse_to_board.pl').
+:- use_module('../../src/parsing/parse_pgn', [pgn/3]).
+parse_file(FileName, Parsed) :-
+    % Open the file
+    open(FileName, read, Stream),
+
+    % Use the pgn predicate from the parse_pgn module to parse the file
+    ( phrase_from_stream(pgn(Moves), Stream)
+    -> Parsed = Moves
+    ;  Parsed = []
+    ),
+    close(Stream).
+
 % Run tests on pairs of PGN and FEN files
 run_tests :-
     test(Files),

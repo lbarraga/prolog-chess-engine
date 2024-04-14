@@ -1,4 +1,4 @@
-:- module(moves_main, [legal_move/3, king_in_check/1]).
+:- module(moves_main, [legal_move/3, king_in_check/1, is_checkmate/1, is_stalemate/1]).
 :- use_module('../pieces.pl').
 :- use_module('../board.pl').
 :- use_module(piece_rules).
@@ -50,3 +50,11 @@ king_in_check(state(Board, _, Color)) :-
     get(KingCo, Board, King),
     opponent(Color, OpponentColor),
     basic_move_unsafe(move(_, KingCo), state(Board, _, OpponentColor), _).
+
+is_stalemate(State) :-
+    \+ king_in_check(State),    % King is not in check
+    \+ legal_move(_, State, _). % No legal moves
+
+is_checkmate(State) :-
+    king_in_check(State),       % King is in check
+    \+ legal_move(_, State, _). % No legal moves

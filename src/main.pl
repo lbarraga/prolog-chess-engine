@@ -2,6 +2,7 @@
 :- use_module('parsing/parse_pgn', [pgn/3]).
 :- use_module('parsing/parse_to_board', [parse_to_board/4]).
 :- use_module(prettyprint, [print_board/1]).
+:- use_module(alpha_beta).
 :- use_module('board.pl').
 
 parse_file(FileName, Parsed) :-
@@ -30,17 +31,20 @@ main :-
     nth0(0, Argv, FileName),
 
     % Parse the file into a list of moves.
-    write('Processing file: '), writeln(FileName),
+    write('Processing file: '), writeln(FileName), nl,
     parse_file(FileName, Parsed),
-    pretty_print(1, Parsed),
+    pretty_print(1, Parsed), nl, nl,
 
     % Parse the moves into a board
-    writeln('Initial State:'),
     init_state(InitialState),
-    writeln('Initial State:'),
     parse_to_board(Parsed, InitialState, FinalState, _),
-    writeln('Initial State:'),
-    FinalState = state(Board, _, _),
-    writeln('Initial State:'),
-    print_board(Board),
+    FinalState = state(Board, Info, Color),
+    write('Info: '), writeln(Info),
+    write('Color: '), writeln(Color),
+    writeln('Board:'),
+    print_board(Board), nl,
+
+    % Calculate the best move
+    best_move(FinalState, 1, BestMove),
+    write('Best move: '), writeln(BestMove),
     halt.
