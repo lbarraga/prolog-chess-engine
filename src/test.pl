@@ -2,7 +2,7 @@
 :- use_module("moves/moves_main.pl").
 :- use_module(prettyprint).
 
-playing_depth(1).
+playing_depth(2).
 
 play :-
     init_state(State),

@@ -23,11 +23,13 @@ score_heuristic_color(State, Score) :-
     piece_score(State, PieceScore),
     amount_of_center_controls(State, CenterControl),
     amount_of_controls(State, Controls),
+    amount_of_advancement(State, PawnAdvancement),
 
     Score is (
-        PieceScore + 
-        CenterControl * 0.1 + 
-        Controls * 0.02
+        PieceScore +
+        CenterControl * 0.1 +
+        Controls * 0.02 +
+        PawnAdvancement * 0.01
     ).
 
 % ========== 1. Piece Score ==========
@@ -61,3 +63,18 @@ is_center((3, 3)).
 is_center((3, 4)).
 is_center((4, 3)).
 is_center((4, 4)).
+
+
+% ========== 4. Pawn Advancement ==========
+
+amount_of_advancement(State, Amount) :-
+    findall(Row, pawn_advancement(State, Row), Rows),
+    sum_list(Rows, Amount).
+
+pawn_advancement(state(Board, _, Color), Score) :-
+    get((Row, _), Board, Piece),
+    name(Piece, pawn),
+    pawn_advancement_score(Color, Row, Score).
+
+pawn_advancement_score(white, R, Score) :- Score is 7 - R.
+pawn_advancement_score(black, R, R).

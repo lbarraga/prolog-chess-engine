@@ -26,7 +26,7 @@ alpha_beta(State, Depth, Alpha, Beta, ValueMove) :-
     do_children(Children, NewDepth, Alpha, Beta, vm(WorstScore, no_move), ValueMove), !.
 
 % If there are no children, return the heuristic value of the state
-alpha_beta(State, _, _, _, vm(Score, no_move)) :- score_heuristic(State, Score), !.
+alpha_beta(State, _, _, _, vm(Score, no_move)) :- score_heuristic(State, Score).
 
 do_children([], _, _, _, Acc, Acc).
 do_children([bm(ChildState, Move) | Rest], Depth, Alpha, Beta, Acc, ValueMove) :-
