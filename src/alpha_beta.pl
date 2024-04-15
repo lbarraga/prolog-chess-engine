@@ -5,10 +5,18 @@
 % Find all legal moves for a given state
 children(State, Children) :-
     bagof(
-        bm(ChildState, Move),
-        legal_move(Move, State, ChildState),
+        bm(ChildState, Move, Score),
+        (legal_move(Move, State, ChildState),
+        score_heuristic(ChildState, Score)),
         Children
     ).
+
+% Sort the list of children based on their score
+sort_children(Children, SortedChildren) :- predsort(compare_child_score, Children, SortedChildren).
+
+% Comparison predicate for sorting children based on score
+compare_child_score(Order, bm(state(_, _, white), _, Score1), bm(_, _, Score2)) :- compare(Order, Score1, Score2).
+compare_child_score(Order, bm(state(_, _, black), _, Score1), bm(_, _, Score2)) :- compare(Order, Score2, Score1).
 
 % ---------------------------------
 
@@ -23,34 +31,35 @@ alpha_beta(State, Depth, Alpha, Beta, ValueMove) :-
     NewDepth is Depth - 1,
     worst_score(State, WorstScore),
     children(State, Children),
-    do_children(Children, NewDepth, Alpha, Beta, vm(WorstScore, no_move), ValueMove), !.
+    sort_children(Children, SortedChildren),
+    do_children(SortedChildren, NewDepth, Alpha, Beta, vm(WorstScore, no_move), ValueMove), !.
 
 % If there are no children, return the heuristic value of the state
 alpha_beta(State, _, _, _, vm(Score, no_move)) :- score_heuristic(State, Score).
 
 do_children([], _, _, _, Acc, Acc).
-do_children([bm(ChildState, Move) | Rest], Depth, Alpha, Beta, Acc, ValueMove) :-
-    comp_mode(ChildState, CompMode),
+do_children([bm(ChildState, Move, _) | Rest], Depth, Alpha, Beta, Acc, ValueMove) :-
+    comp_mode(ChildState, CompMode, Color),
     alpha_beta(ChildState, Depth, Alpha, Beta, vm(Score, _)),
 
     % Compare the new score the the current best score
     compare_mode(Acc, vm(Score, Move), NewAcc, CompMode),
-    update_alpha_beta(Player, Alpha, Beta, Score, NewAlpha, NewBeta),
+    update_alpha_beta(Color, Alpha, Beta, Score, NewAlpha, NewBeta),
 
     NewAcc = vm(BestScore, _),
     (
-        should_prune(Player, BestScore, NewAlpha, NewBeta)
-        -> ValueMove = NewAcc, write('Pruned\n')
+        should_prune(Color, BestScore, NewAlpha, NewBeta)
+        -> ValueMove = NewAcc
         ; do_children(Rest, Depth, NewAlpha, NewBeta, NewAcc, ValueMove)
     ).
 
 % White is the maximizing player, black is the minimizing player
-update_alpha_beta(white, Alpha, Beta, Score, max(Alpha, Score), Beta).
-update_alpha_beta(black, Alpha, Beta, Score, Alpha, min(Beta, Score)).
+update_alpha_beta(white, Alpha, Beta, Score, NewAlpha, Beta) :- NewAlpha is max(Alpha, Score).
+update_alpha_beta(black, Alpha, Beta, Score, Alpha, NewBeta) :- NewBeta is min(Beta, Score).
 
 % Predicate to get the comparison mode based on the player
-comp_mode(state(_, _, white), min).
-comp_mode(state(_, _, black), max).
+comp_mode(state(_, _, white), min, black).
+comp_mode(state(_, _, black), max, white).
 
 % Adjusted compare_mode predicate to handle vm structures.
 compare_mode(vm(V1, M1), vm(V2, _),  vm(V1, M1), min) :- V1 < V2.
