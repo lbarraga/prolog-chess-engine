@@ -1,4 +1,4 @@
-:- module(parse_san, [san/3]).
+:- module(parse_san, [san/4]).
 
 promoting_piece(P) --> bishop(P); knight(P); rook(P); queen(P).    % A piece which can be promoted to.
 piece(P) --> promoting_piece(P); king(P).                    % A general piece on the board.
@@ -34,9 +34,9 @@ disambiguation(DisAmb) --> coordinate(DisAmb).
 destination(Co, Prom) --> coordinate(Co), optional_promotion(Prom).
 
 % Generalized move rules
-move(plie(P, Co, D, Prom)) --> piece(P), optional_disambiguation(D), optional_takes, destination(Co, Prom). % General piece move.
-move(plie(pawn, Co, file(F), Prom)) --> file(F), takes, destination(Co, Prom).                              % Pawn capture.
-move(plie(pawn, Co, none, Prom)) --> destination(Co, Prom).                                                 % Pawn move.
+move(plie(P, Takes, Co, D, Prom)) --> piece(P), optional_disambiguation(D), optional_takes(Takes), destination(Co, Prom). % General piece move.
+move(plie(pawn, takes, Co, file(F), Prom)) --> file(F), takes, destination(Co, Prom).                              % Pawn capture.
+move(plie(pawn, no_takes, Co, none, Prom)) --> destination(Co, Prom).                                                 % Pawn move.
 move(castle(short)) --> short_castle.                                                                % Special move.
 move(castle(long)) --> long_castle.                                                                  % Special move.
 
@@ -44,14 +44,16 @@ move(castle(long)) --> long_castle.                                             
 optional_disambiguation(DisAmb) --> disambiguation(DisAmb).
 optional_disambiguation(none) --> [].
 
-optional_takes --> takes.
-optional_takes --> [].
+optional_takes(takes) --> takes.
+optional_takes(no_takes) --> [].
 
 optional_promotion(P) --> promotes, promoting_piece(P).
 optional_promotion(no_promotion) --> [].
 
 % Post-move conditions
-optional_check_or_checkmate --> check; checkmate; [].
+optional_check_or_checkmate(checkmate) --> checkmate.
+optional_check_or_checkmate(check) --> check.
+optional_check_or_checkmate(no_check) --> [].
 
 % Top-level rule for moves including post-move conditions
-san(Move) --> move(Move), optional_check_or_checkmate.
+san(Move, Check) --> move(Move), optional_check_or_checkmate(Check).

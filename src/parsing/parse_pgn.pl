@@ -1,6 +1,6 @@
 :- module(parse_pgn, [pgn/3]).
 
-:- use_module(parse_san, [san/3]).
+:- use_module(parse_san, [san/4]).
 :- use_module(library(pio)).
 :- use_module(library(dcg/basics)).
 
@@ -16,7 +16,7 @@ tags --> eol.
 tag --> between("[", _, "]"), eol.
 
 move_nr --> digits(_), ".".
-plie(San) --> blanks, san(San), blanks.
+plie(san(San, Check)) --> blanks, san(San, Check), blanks.
 
 move(San1, San2) --> move_nr, plie(San1), plie(San2).
 move_plie(San) --> move_nr, plie(San).

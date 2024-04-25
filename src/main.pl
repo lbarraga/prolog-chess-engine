@@ -28,8 +28,6 @@ pretty_print(N, [turn(From, To)|T]) :-
 
 
 main :-
-    play,
-    halt,
     % Extract the filename from the command line arguments
     current_prolog_flag(argv, Argv),
     nth0(0, Argv, FileName),
@@ -49,7 +47,7 @@ main :-
     print_board(Board), nl,
 
     % Calculate the best move and profile it
-    time(best_move(FinalState, 1, BestMove)),
+    time(best_move(FinalState, 3, BestMove)),
 
     write('Best move: '), writeln(BestMove),
     halt.
