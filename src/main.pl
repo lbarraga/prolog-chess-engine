@@ -1,5 +1,7 @@
 :- initialization(main).
 :- use_module('parsing/parse_pgn', [pgn/3]).
+:- use_module('parsing/parse_san', [san/4]).
+:- use_module('parsing/san_move', [san_move/3]).
 :- use_module('parsing/parse_to_board', [parse_to_board/4]).
 :- use_module(prettyprint, [print_board/1]).
 :- use_module(alpha_beta).
@@ -18,11 +20,16 @@ parse_file(FileName, Parsed) :-
     ),
     close(Stream).
 
+san_to_move_string(no_move, "") :- !.
+san_to_move_string(San, MoveString) :- phrase(San, List), atom_chars(MoveString, List).
+
 % Define a predicate to pretty print a list
 pretty_print(_, []).
-pretty_print(N, [turn(From, To)|T]) :-
+pretty_print(N, [turn(WhiteSan, BlackSan)|T]) :-
     write(N), write(". "),
-    write(From), write(" - "), write(To), nl,
+    san_to_move_string(WhiteSan, WhiteMoveString),
+    san_to_move_string(BlackSan, BlackMoveString),
+    write(WhiteMoveString), write(" - "), write(BlackMoveString), nl,
     N1 is N + 1,
     pretty_print(N1, T).
 
@@ -47,7 +54,11 @@ main :-
     print_board(Board), nl,
 
     % Calculate the best move and profile it
-    time(best_move(FinalState, 3, BestMove)),
+    time(best_move(FinalState, 1, vm(_, BestMove))),
 
     write('Best move: '), writeln(BestMove),
+    san_move(San, BestMove, FinalState),
+    writeln('San move:'), writeln(San),
+    san_to_move_string(San, MoveString),
+    write('Move string: '), writeln(MoveString),
     halt.

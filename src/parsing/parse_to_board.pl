@@ -9,21 +9,9 @@ parse_to_board(Plies, StartState, EndState, MoveCounts) :-
 
 parse_to_board_(_, [], State, State, []).
 parse_to_board_(N, [turn(WhitePlie, BlackPlie) | Rest], StartState, EndState, [CountWhite, CountBlack | RestCount]) :-
-    write('Turn '), write(N), nl,
-    write('White: '), writeln(WhitePlie),
-    StartState = state(_, Info, _),
-    writeln(Info),
     parse_plie(WhitePlie, StartState, WhiteTempState, CountWhite),
-    WhiteTempState = state(WhiteTempBoard, _, _),
-    print_board(WhiteTempBoard),
-    write('Black: '), writeln(BlackPlie),
-    WhiteTempState = state(_, BlackInfo, _),
-    writeln(BlackInfo),
 
     parse_plie(BlackPlie, WhiteTempState, BlackTempState, CountBlack),
-    nl,
-    BlackTempState = state(BlackTempBoard, _, _),
-    print_board(BlackTempBoard),
     N1 is N + 1,
     parse_to_board_(N1, Rest, BlackTempState, EndState, RestCount).
 % 17, 21, 31, 40, 59, 89
@@ -43,8 +31,5 @@ count_moves(State, Count) :-
 parse_plie(no_move, State, State, 0).
 parse_plie(San, State, EndState, Count) :-
     count_moves(State, Count),
-    writeln(Count),
-    writeln(San),
     san_move(San, Move, State),
-    writeln(Move),
     legal_move(Move, State, EndState).
