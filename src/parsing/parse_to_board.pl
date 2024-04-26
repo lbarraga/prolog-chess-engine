@@ -24,11 +24,8 @@ count_moves(State, Count) :-
     length(Promotions, PromotionLength),
     length(Moves, MoveLength),
     Count is CastleLength + PromotionLength // 2 + MoveLength.
-%     State = state(B, Info, C),
-%     print_board(B), write(' '), write(Info), write(' '), write(C), write(' '),
-%     write(CastleLength), write(' '), write(PromotionLength), write(' '), write(MoveLength), write(' '), writeln(Count).
 
-parse_plie(no_move, State, State, 0).
+parse_plie(no_move, State, State, 0) :- !.
 parse_plie(San, State, EndState, Count) :-
     count_moves(State, Count),
     san_move(San, Move, State),

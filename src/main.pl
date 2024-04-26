@@ -29,7 +29,7 @@ pretty_print(N, [turn(WhiteSan, BlackSan)|T]) :-
     write(N), write(". "),
     san_to_move_string(WhiteSan, WhiteMoveString),
     san_to_move_string(BlackSan, BlackMoveString),
-    write(WhiteMoveString), write(" - "), write(BlackMoveString), nl,
+    write(WhiteMoveString), write(" "), write(BlackMoveString), write(" "),
     N1 is N + 1,
     pretty_print(N1, T).
 
@@ -40,25 +40,17 @@ main :-
     nth0(0, Argv, FileName),
 
     % Parse the file into a list of moves.
-    write('Processing file: '), writeln(FileName), nl,
     parse_file(FileName, Parsed),
-    pretty_print(1, Parsed), nl, nl,
+    pretty_print(1, Parsed),
 
     % Parse the moves into a board
     init_state(InitialState),
     parse_to_board(Parsed, InitialState, FinalState, _),
-    FinalState = state(Board, Info, Color),
-    write('Info: '), writeln(Info),
-    write('Color: '), writeln(Color),
-    writeln('Board:'),
-    print_board(Board), nl,
 
     % Calculate the best move and profile it
-    time(best_move(FinalState, 1, vm(_, BestMove))),
+    best_move(FinalState, 1, vm(_, BestMove)),
 
-    write('Best move: '), writeln(BestMove),
     san_move(San, BestMove, FinalState),
-    writeln('San move:'), writeln(San),
     san_to_move_string(San, MoveString),
-    write('Move string: '), writeln(MoveString),
+    writeln(MoveString),
     halt.
