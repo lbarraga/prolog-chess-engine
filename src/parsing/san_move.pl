@@ -43,7 +43,7 @@ plie_move(plie(PieceName, Takes, co(R, C), Disambiguation, Promotion), Check, pr
     get((R, C), StartBoard, ToPiece), takes(Takes, FromPiece, ToPiece, Info), % Takes must be correct
     disambiguate(From, Disambiguation).
 
-takes(takes, _, _, info(_, (_, _))) :- !.
+takes(takes, pawn, _, info(_, (_, _))) :- !.
 takes(takes, FromPiece, ToPiece, _) :-
     color(FromPiece, FromColor),
     color(ToPiece, ToColor),
