@@ -12,11 +12,11 @@ san_move(San, move(From, To), State) :-
     % only one piece can make the move
     State = state(Board, _, _),
     % get disambiguation
-    San = san(plie(_, _, _, Dis, _), _),
+    San = san(plie(_, Takes, _, Dis, _), _),
     get(From, Board, Piece),
     findall(
         F,
-        (legal_move(move(F, To), State, _), get(F, Board, Piece), disambiguate(F, Dis)),
+        (legal_move(move(F, To), State, _), get(F, Board, Piece), disambiguate(Piece, Takes, F, Dis)),
         L
     ),
     L = [_],
@@ -33,30 +33,31 @@ plie_move(plie(PieceName, Takes, co(R, C), Disambiguation, no_promotion), Check,
     legal_move(move(From, (R, C)), state(StartBoard, Info, Color), NextState),
     check(Check, NextState),
     get(From, StartBoard, FromPiece), name(FromPiece, PieceName),   % Piece must have same name as in the plie
-    get((R, C), StartBoard, ToPiece), takes(Takes, FromPiece, ToPiece, Info), % Takes must be correct
-    disambiguate(From, Disambiguation).
+    get((R, C), StartBoard, ToPiece), takes(Takes, FromPiece, ToPiece, Info, co(R, C)), % Takes must be correct
+    disambiguate(PieceName, Takes, From, Disambiguation).
 
 plie_move(plie(PieceName, Takes, co(R, C), Disambiguation, Promotion), Check, promotion(From, (R, C), Promotion), state(StartBoard, Info, Color)) :-
     legal_move(promotion(From, (R, C), Promotion), state(StartBoard, Info, Color), NextState),
     check(Check, NextState),
     get(From, StartBoard, FromPiece), name(FromPiece, PieceName),   % Piece must have same name as in the plie
-    get((R, C), StartBoard, ToPiece), takes(Takes, FromPiece, ToPiece, Info), % Takes must be correct
-    disambiguate(From, Disambiguation).
+    get((R, C), StartBoard, ToPiece), takes(Takes, FromPiece, ToPiece, Info, co(R, C)), % Takes must be correct
+    disambiguate(PieceName, Takes, From, Disambiguation).
 
-takes(takes, pawn, _, info(_, (_, _))) :- !.
-takes(takes, FromPiece, ToPiece, _) :-
+takes(takes, FromPiece, _, info(_, (R, C)), co(R, C)) :- name(FromPiece, pawn), !.
+takes(takes, FromPiece, ToPiece, _, _) :-
     color(FromPiece, FromColor),
     color(ToPiece, ToColor),
     opponent(FromColor, ToColor).
 
-takes(no_takes, _, ToPiece, _) :- empty(ToPiece).
+takes(no_takes, _, ToPiece, _, _) :- empty(ToPiece).
 
 check(checkmate, State) :- is_checkmate(State).
 check(check, State) :- king_in_check(State).
 check(no_check, State) :- \+ king_in_check(State).
 
-disambiguate(_, none).                   % No disambiguation (e.g. Rxe5)
-disambiguate((_, Col), file(Col)).       % Disambiguation on file (e.g. Rfxe1)
-disambiguate((Row, _), rank(Row)).       % Disambiguation on rank (e.g. R1xe5)
-disambiguate((Row, Col), co(Row, Col)).  % Disambiguation on coordinate (e.g. Re1xe5)
+disambiguate(pawn, takes, (_, Col), file(Col)) :- !.    % No disambiguation for pawns
+disambiguate(_, _, _, none).                            % No disambiguation (e.g. Rxe5)
+disambiguate(_, _, (_, Col), file(Col)).                % Disambiguation on file (e.g. Rfxe1)
+disambiguate(_, _, (Row, _), rank(Row)).                % Disambiguation on rank (e.g. R1xe5)
+disambiguate(_, _, (Row, Col), co(Row, Col)).           % Disambiguation on coordinate (e.g. Re1xe5)
 

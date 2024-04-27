@@ -8,22 +8,39 @@ legal_move(castle(Type), State, NewState) :-
     castle(Type, State, NewState).
 
 legal_move(promotion(From, To, PromotingPieceName), state(Board, Info, Color), state(NewBoard, NewInfo, Opponent)) :-
-    legal_move(move(From, To), state(Board, Info, Color), state(TempBoard, NewInfo, Opponent)),
+    legal_move_promotion(move(From, To), state(Board, Info, Color), state(TempBoard, NewInfo, Opponent)),
     % Check if the piece moved is a pawn
     get(From, Board, Piece),
     name(Piece, pawn),
     color(Piece, Color),
     last_rank(Color, To),
     name(PromotingPiece, PromotingPieceName),
+    is_promotable(PromotingPieceName),
     color(PromotingPiece, Color),
     place(To, PromotingPiece, TempBoard, NewBoard).
+
 
 legal_move(move(From, To), State, NewState) :-
     basic_move_unsafe(move(From, To), State, NewState),
     NewState = state(NewBoard, Info, Opponent),
     opponent(Opponent, Color),
+    \+ king_in_check(state(NewBoard, Info, Color)),
+    % Check if it is not a pawn moving to the last last_rank
+    State = state(Board, _, _),
+    get(From, Board, Piece),
+    name(Piece, Name),
+    \+ (name(Piece, pawn), last_rank(Color, To)).
+
+legal_move_promotion(move(From, To), State, NewState) :-
+    basic_move_unsafe(move(From, To), State, NewState),
+    NewState = state(NewBoard, Info, Opponent),
+    opponent(Opponent, Color),
     \+ king_in_check(state(NewBoard, Info, Color)).
 
+is_promotable(queen).
+is_promotable(rook).
+is_promotable(bishop).
+is_promotable(knight).
 
 last_rank(white, (0, _)).
 last_rank(black, (7, _)).
