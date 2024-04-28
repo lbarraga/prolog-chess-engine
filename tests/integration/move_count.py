@@ -81,17 +81,25 @@ def test_pgn(file: str):
     return compare_sets(first, second)
 
 
-#print(test_pgn("../../src/craycray.pgn"))
+def test_pgn_all_moves(file: str):
+    print(f"Testing {file}")
+    temps = create_temp_files(file)
 
-temps = create_temp_files("../../src/craycray.pgn")
+    t = ['a', 'b']
+    for i, temp in enumerate(temps):
+        print(f"move {i // 2 + 1}.{t[i % 2]}: {test_pgn(temp)}")
 
-t = ['a', 'b']
-for i, temp in enumerate(temps):
-    print(f"======================== move {i // 2 + 1}.{t[i % 2]} ========================")
-    print(test_pgn(temp))
-
-# Clean up
-for temp in temps:
-    os.remove(temp)
+    # Clean up
+    for temp in temps:
+        os.remove(temp)
 
 
+def test_all_files_in_directory(directory):
+    for filename in os.listdir(directory):
+        if filename.endswith(".pgn"):  # Only process .pgn files
+            file_path = os.path.join(directory, filename)
+            test_pgn_all_moves(file_path)
+
+
+if __name__ == '__main__':
+    test_pgn_all_moves("../../src/craycray2.pgn")
