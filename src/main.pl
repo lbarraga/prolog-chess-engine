@@ -1,5 +1,5 @@
 :- initialization(main).
-:- use_module('parsing/parse_pgn', [pgn/3]).
+:- use_module('parsing/parse_pgn', [pgn/4]).
 :- use_module('parsing/parse_san', [san/4]).
 :- use_module('parsing/san_move', [san_move/3]).
 :- use_module('parsing/parse_to_board', [parse_to_board/4]).
@@ -10,12 +10,15 @@
 :- use_module(library(prolog_stack)).
 :- use_module(test).
 
+assert_rules(koth_rules) :- assert(koth_rules).
+assert_rules(normal_rules) :- assert(normal_rules).
+
 parse_file(FileName, Parsed) :-
     % Open the file
     open(FileName, read, Stream),
 
     % Use the pgn predicate from the parse_pgn module to parse the file
-    ( phrase_from_stream(pgn(Moves), Stream)
+    ( phrase_from_stream(pgn(Moves, _), Stream), !
     -> Parsed = Moves
     ;  Parsed = []
     ),

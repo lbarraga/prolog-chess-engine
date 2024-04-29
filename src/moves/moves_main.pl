@@ -28,7 +28,6 @@ legal_move(move(From, To), State, NewState) :-
     % Check if it is not a pawn moving to the last last_rank
     State = state(Board, _, _),
     get(From, Board, Piece),
-    name(Piece, Name),
     \+ (name(Piece, pawn), last_rank(Color, To)).
 
 legal_move_promotion(move(From, To), State, NewState) :-

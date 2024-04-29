@@ -1,4 +1,4 @@
-:- module(parse_pgn, [pgn/3]).
+:- module(parse_pgn, [pgn/4]).
 
 :- use_module(parse_san, [san/4]).
 :- use_module(library(pio)).
@@ -7,13 +7,16 @@
 between(Left, Between, Right) --> Left, string_without(Right, Between), Right.
 
 % Define the grammar for parsing PGN files.
-pgn(Moves) --> tags, movetext(Moves), result, blanks.
+pgn(Moves, R) --> tags(R), movetext(Moves), result, blanks.
 
-tags --> tag, tags.
-tags --> [].
-tags --> eol.
+tags(koth_rules) --> tag(koth_rules), tags(_).
+tags(koth_rules) --> tag(_), tags(koth_rules).
+tags(normal_rules) --> tag(normal_rules), tags(normal_rules).
+tags(normal_rules) --> [].
+tags(normal_rules) --> eol.
 
-tag --> between("[", _, "]"), eol.
+tag(koth_rules) --> "[Rules \"koth\"]", eol.
+tag(normal_rules) --> between("[", _, "]"), eol.
 
 move_nr --> digits(_), ".".
 plie(san(San, Check)) --> blanks, san(San, Check), blanks.
