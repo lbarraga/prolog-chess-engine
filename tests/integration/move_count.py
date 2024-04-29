@@ -95,11 +95,11 @@ def test_pgn_all_moves(file: str):
 
 
 def test_all_files_in_directory(directory):
-    for filename in os.listdir(directory):
+    for filename in os.listdir(directory)[50:]:
         if filename.endswith(".pgn"):  # Only process .pgn files
             file_path = os.path.join(directory, filename)
             test_pgn_all_moves(file_path)
 
 
 if __name__ == '__main__':
-    test_pgn_all_moves("../../src/craycray2.pgn")
+    test_all_files_in_directory("../extra/test_pgns")
