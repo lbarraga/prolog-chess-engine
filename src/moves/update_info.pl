@@ -12,7 +12,7 @@
 %     - Castling: Castling info
 %     - EnPassant: En passant info
 % NewInfo: New info of the board
-update_info(Name, Move, Color, info(Castling, EnPassant), info(NewCastling, NewEnPassant)) :-
+update_info(Name, Move, Color, info(Castling, _), info(NewCastling, NewEnPassant)) :-
     update_en_passant(Name, Move, NewEnPassant),
     update_castling_color(Color, ColorCastling, NewColorCastling, Castling, NewCastling),
     update_castling(Name, Move, ColorCastling, NewColorCastling).
