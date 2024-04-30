@@ -4,6 +4,9 @@
 :- use_module('../board.pl').
 :- use_module(update_info).
 
+% basic_piece_move_unsafe(+Name, +Move, +State, -NewState)
+% Move a piece on the board and update the game state.
+% This predicate checks for piece rules and valid destination squares, but does not check for check.
 basic_piece_move_unsafe(Name, Move, state(Board, Info, ToMove), state(NewBoard, NewInfo, Opponent)) :-
     opponent(ToMove, Opponent),                         % Get opponent color
     piece_rule(Name, Move, state(Board, Info, ToMove)), % Check if move is valid for piece
@@ -11,6 +14,7 @@ basic_piece_move_unsafe(Name, Move, state(Board, Info, ToMove), state(NewBoard, 
     update_info(Name, Move, ToMove, Info, NewInfo),
     check_en_passant(Move, Info, TempBoard, NewBoard).
 
+% check_en_passant(+Move, +Info, +Board, -NewBoard)
 % If the move is an en passant capture, remove the captured pawn
 check_en_passant(move(_, To), info(_, To), Board, NewBoard) :-
     get(To, Board, Piece),
@@ -18,14 +22,23 @@ check_en_passant(move(_, To), info(_, To), Board, NewBoard) :-
     one_after_en_passant_square(To, After),
     remove(After, Board, NewBoard), !.
 
+% Do nothing if not en passant
 check_en_passant(_, _, Board, Board).
 
+% en_passant_square(+Square)
+% Square is a square where an en passant capture can be made
 en_passant_square((2, _)).
 en_passant_square((5, _)).
+
+% one_after_en_passant_square(+Square, -After)
+% After is the square after Square
 one_after_en_passant_square((5, C), (4, C)).
 one_after_en_passant_square((2, C), (3, C)).
 
 % ------------------------------------------------- Rook -----------------------------------------------
+% piece_rule(+Piece, +Move, +State)
+% Checks if a piece can move from From to To in the given state.
+% This predicate checks that pieces can only capture opponents pieces and that they can only move to empty squares.
 piece_rule(rook, move(From, To), state(Board, _, _)) :- in_sight(row, From, To, Board).
 piece_rule(rook, move(From, To), state(Board, _, _)) :- in_sight(column, From, To, Board).
 
@@ -53,7 +66,7 @@ piece_rule(king, move((R1, C1), (R2, C2)), _) :-
 
 % Een pion kan twee plaatsen naar voor gaan als hij nog op zijn rank staat. normaal kan hij eentje naar voor gaan.
 
-
+% Top level pawn rule.
 piece_rule(pawn, move(From, To), state(Board, info(_, EP), _)) :-
     on_board(From), on_board(To),
     color_of_co(From, Board, Color),    % Get color of pawn
