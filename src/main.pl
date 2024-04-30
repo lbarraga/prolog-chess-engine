@@ -2,7 +2,7 @@
 :- use_module('parsing/parse_pgn', [pgn/4]).
 :- use_module('parsing/parse_san', [san/4]).
 :- use_module('parsing/san_move', [san_move/3]).
-:- use_module('parsing/parse_to_board', [parse_to_board/4]).
+:- use_module('parsing/parse_to_board', [parse_to_board/3]).
 :- use_module('moves/moves_main', [legal_move/3, is_checkmate/1, is_stalemate/1]).
 :- use_module(prettyprint, [print_board/1, print_state/1]).
 :- use_module(alpha_beta).
@@ -77,6 +77,6 @@ main :-
     parse_file(FileName, Parsed),
     % Parse the moves into a board
     init_state(InitialState),
-    parse_to_board(Parsed, InitialState, FinalState, _),
+    parse_to_board(Parsed, InitialState, FinalState),
     output(Test, Parsed, FinalState),
     halt.
