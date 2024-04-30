@@ -47,6 +47,7 @@ result_string(state(Board, Info, black), "1-0") :- is_checkmate(state(Board, Inf
 result_string(State, "1/2-1/2") :- is_stalemate(State), !.
 result_string(_, "*").
 
+output_line(Parsed, _, no_move) :- pretty_print(Parsed), nl, !.
 output_line(Parsed, FinalState, Move) :-
     pretty_print(Parsed),
     legal_move(Move, FinalState, MovedState),
