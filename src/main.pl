@@ -11,6 +11,8 @@
 
 print_rules :- rules(Rules), writeln(Rules).
 
+% parse_file(+FileName, -Parsed)
+% Parses the file with the given filename into a list of moves
 parse_file(FileName, Parsed) :-
     % Open the file
     open(FileName, read, Stream),
@@ -25,7 +27,8 @@ parse_file(FileName, Parsed) :-
 san_to_move_string(no_move, "") :- !.
 san_to_move_string(San, MoveString) :- phrase(San, List), atom_chars(MoveString, List).
 
-% Define a predicate to pretty print a list
+% pretty_print(+Moves)
+% prints the moves in a human readable format (pgn) in the terminal
 pretty_print(Moves) :- pretty_print_(1, no_move, Moves).
 
 pretty_print_(_, no_move, []) :- !.
@@ -41,11 +44,15 @@ pretty_print_(N, _, [turn(WhiteSan, BlackSan)|T]) :-
     N1 is N + 1,
     pretty_print_(N1, BlackSan, T).
 
+% result_string(+State, -Result)
+% get the result of a state as a pgn result string.
 result_string(state(Board, Info, white), "0-1") :- is_checkmate(state(Board, Info, white)), !.
 result_string(state(Board, Info, black), "1-0") :- is_checkmate(state(Board, Info, black)), !.
 result_string(State, "1/2-1/2") :- is_stalemate(State), !.
 result_string(_, "*").
 
+% output_line(+Parsed, +State, Move)
+% output a full pgn line to the terminal and add the found move at the end, along with the result string.
 output_line(Parsed, _, no_move) :- pretty_print(Parsed), nl, !.
 output_line(Parsed, FinalState, Move) :-
     pretty_print(Parsed),
@@ -56,11 +63,12 @@ output_line(Parsed, FinalState, Move) :-
     write(MoveString),
     write(' '), writeln(S).
 
+% Output if TEST was specified in the command line arguments
 output(no_test, Parsed, FinalState) :-
     best_move(FinalState, 1, value_move(_, BestMove)),
     output_line(Parsed, FinalState, BestMove).
 
-
+% Output if TEST was not specified in the command line arguments
 output(test, Parsed, FinalState) :-
     findall(Move, legal_move(Move, FinalState, _), Moves),
     maplist(output_line(Parsed, FinalState), Moves).
