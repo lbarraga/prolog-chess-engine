@@ -9,10 +9,11 @@
     empty/1,
     pawn_direction/2,
     pawn_start_row/2,
-    could_capture/2,
     value/2
 ]).
 
+% == General piece definitions ==
+% The predicates speak for themselves
 
 black('r').
 black('n').
@@ -62,13 +63,6 @@ pawn_start_row(black, (1, _)).
 
 opponent(white, black).
 opponent(black, white).
-
-could_capture(_, CapturedPiece) :- empty(CapturedPiece).
-could_capture(CapturingPiece, CapturedPiece) :-
-    color(CapturingPiece, CapturingColor),
-    color(CapturedPiece, CapturedColor),
-    opponent(CapturingColor, CapturedColor).
-
 
 % Piece values
 value(pawn, 1).

@@ -79,6 +79,14 @@ opposing_color_or_empty(move(From, To), state(Board, _, Color)) :-
     get(To, Board, ToSquare),
     could_capture(FromPiece, ToSquare). % The destination square is empty or contains an opponent piece.
 
+% could_capture(+CapturingPiece, +CapturedPiece)
+% True if CapturingPiece is of opposite color to CapturedPiece or CapturedPiece is empty.
+could_capture(_, CapturedPiece) :- empty(CapturedPiece).
+could_capture(CapturingPiece, CapturedPiece) :-
+    color(CapturingPiece, CapturingColor),
+    color(CapturedPiece, CapturedColor),
+    opponent(CapturingColor, CapturedColor).
+
 % king_in_check(+State)
 % Check if the king is in check in the given state.
 king_in_check(state(Board, _, Color)) :-
