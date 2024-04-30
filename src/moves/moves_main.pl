@@ -73,4 +73,19 @@ is_stalemate(State) :-
 
 is_checkmate(State) :-
     king_in_check(State),       % King is in check
-    \+ legal_move(_, State, _). % No legal moves
+    \+ legal_move(_, State, _), !. % No legal moves
+
+% The new is_checkmate predicate for King of the Hill rules
+is_checkmate(State) :-
+    rules(koth_rules),
+    state(Board, _, Color) = State,
+    opponent(Color, OpponentColor),
+    king(OpponentColor, OpponentKing),
+    get(OpponentKingCo, Board, OpponentKing),
+    central_square(OpponentKingCo).     % King is on a central square
+
+% Define the central squares
+central_square((3,3)).
+central_square((3,4)).
+central_square((4,3)).
+central_square((4,4)).

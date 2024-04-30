@@ -1,73 +1,81 @@
 :- module(alpha_beta, [best_move/3]).
-:- use_module('moves/moves_main.pl', [legal_move/3]).
+:- use_module('moves/moves_main.pl', [legal_move/3, is_checkmate/1]).
 :- use_module(score_heuristics).
 
-% Find all legal moves for a given state
+compare_children(Order, bm(State1, _), bm(State2, _)) :-
+    score_heuristic(State1, Score1),
+    score_heuristic(State2, Score2),
+    comp_mode(State1, Mode),
+    (Mode = max -> (Score1 > Score2 -> Order = > ; Order = <) ; (Score1 < Score2 -> Order = > ; Order = <)).
+
+
 children(State, Children) :-
-    bagof(
-        bm(ChildState, Move, Score),
-        (legal_move(Move, State, ChildState),
-        score_heuristic(ChildState, Score)),
-        Children
-    ).
+    bagof(bm(NewState, M), legal_move(M, State, NewState), Children).
 
-% Sort the list of children based on their score
-sort_children(Children, SortedChildren) :- predsort(compare_child_score, Children, SortedChildren).
-
-% Comparison predicate for sorting children based on score
-compare_child_score(Order, bm(state(_, _, white), _, Score1), bm(_, _, Score2)) :- compare(Order, Score1, Score2).
-compare_child_score(Order, bm(state(_, _, black), _, Score1), bm(_, _, Score2)) :- compare(Order, Score2, Score1).
-
-% ---------------------------------
-
-best_move(State, Depth, Move) :- alpha_beta(State, Depth, -1000, +1000, Move).
+best_move(State, Depth, Move) :- alpha_beta(State, Depth, -1000, 1000, Move).
 
 % If the depth is 0, return the heuristic value of the state
 alpha_beta(State, 0, _, _, vm(Value, no_move)) :-
     score_heuristic(State, Value), !.
 
-% If there are children, recursively call alpha_beta on them
-alpha_beta(State, Depth, Alpha, Beta, ValueMove) :-
+alpha_beta(State, Depth, Alpha, Beta, vm(Value, Move)) :-
     NewDepth is Depth - 1,
-    worst_score(State, WorstScore),
+    \+ is_checkmate(State),
     children(State, Children),
-    sort_children(Children, SortedChildren),
-    do_children(SortedChildren, NewDepth, Alpha, Beta, vm(WorstScore, no_move), ValueMove), !.
+    comp_mode(State, Mode),
+    worst_score(State, WorstScore),
+    choose_child(Children, NewDepth, Alpha, Beta, Mode, vm(WorstScore, no_move), vm(Value, Move)), !.
 
 % If there are no children, return the heuristic value of the state
 alpha_beta(State, _, _, _, vm(Score, no_move)) :- score_heuristic(State, Score).
 
-do_children([], _, _, _, Acc, Acc).
-do_children([bm(ChildState, Move, _) | Rest], Depth, Alpha, Beta, Acc, ValueMove) :-
-    comp_mode(ChildState, CompMode, Color),
-    alpha_beta(ChildState, Depth, Alpha, Beta, vm(Score, _)),
+% function alphabeta(node, depth, α, β, maximizingPlayer) is
+%     if maximizingPlayer then
+%         value := −∞
+%         for each child of node do
+%             value := max(value, alphabeta(child, depth − 1, α, β, FALSE))
+%             if value > β then
+%                 break (* β cutoff *)
+%             α := max(α, value)
+%         return value
+%     else
+%         value := +∞
+%         for each child of node do
+%             value := min(value, alphabeta(child, depth − 1, α, β, TRUE))
+%             if value < α then
+%                 break (* α cutoff *)
+%             β := min(β, value)
+%         return value
 
-    % Compare the new score the the current best score
-    compare_mode(Acc, vm(Score, Move), NewAcc, CompMode),
-    update_alpha_beta(Color, Alpha, Beta, Score, NewAlpha, NewBeta),
+choose_child([], _, _, _, _, Acc, Acc).
+choose_child([bm(ChildState, Move) | Children], Depth, Alpha, Beta, Mode, Acc, BestMove) :-
+    % Get the value of the child
+    alpha_beta(ChildState, Depth, Alpha, Beta, vm(Value, _)),
 
-    NewAcc = vm(BestScore, _),
+    % Update the best value and move
+    compare_moves(Mode, vm(Value, Move), Acc, NewAcc),
+
+    % Update alpha or beta based on the mode
+    update_alpha_beta(Mode, Alpha, Beta, Value, NewAlpha, NewBeta),
+
+    % Check if we should prune
     (
-        should_prune(Color, BestScore, NewAlpha, NewBeta)
-        -> ValueMove = NewAcc
-        ; do_children(Rest, Depth, NewAlpha, NewBeta, NewAcc, ValueMove)
+        should_prune(Mode, NewAlpha, NewBeta, NewAcc)
+        -> BestMove = NewAcc
+        ; choose_child(Children, Depth, NewAlpha, NewBeta, Mode, NewAcc, BestMove)
     ).
 
-% White is the maximizing player, black is the minimizing player
-update_alpha_beta(white, Alpha, Beta, Score, NewAlpha, Beta) :- NewAlpha is max(Alpha, Score).
-update_alpha_beta(black, Alpha, Beta, Score, Alpha, NewBeta) :- NewBeta is min(Beta, Score).
 
-% Predicate to get the comparison mode based on the player
-comp_mode(state(_, _, white), min, black).
-comp_mode(state(_, _, black), max, white).
+should_prune(max, _, Beta, vm(Value, _)) :- Value > Beta.
+should_prune(min, Alpha, _, vm(Value, _)) :- Value < Alpha.
 
-% Adjusted compare_mode predicate to handle vm structures.
-compare_mode(vm(V1, M1), vm(V2, _),  vm(V1, M1), min) :- V1 < V2.
-compare_mode(vm(V1, _),  vm(V2, M2), vm(V2, M2), min) :- V1 >= V2.
-compare_mode(vm(V1, M1), vm(V2, _),  vm(V1, M1), max) :- V1 > V2.
-compare_mode(vm(V1, _),  vm(V2, M2), vm(V2, M2), max) :- V1 =< V2.
+update_alpha_beta(max, Alpha, Beta, Score, NewAlpha, Beta) :- NewAlpha is max(Alpha, Score).
+update_alpha_beta(min, Alpha, Beta, Score, Alpha, NewBeta) :- NewBeta is min(Beta, Score).
 
+compare_moves(max, vm(V1, M), vm(V2, _), vm(V1, M)) :- V1 >= V2, !.
+compare_moves(max, vm(V1, _), vm(V2, M), vm(V2, M)) :- V1 <  V2, !.
+compare_moves(min, vm(V1, M), vm(V2, _), vm(V1, M)) :- V1 <  V2, !.
+compare_moves(min, vm(V1, _), vm(V2, M), vm(V2, M)) :- V1 >= V2, !.
 
-% white should prune when the best score is greater than beta while black should prune when the best score is less than alpha
-should_prune(white, BestScore, _, Beta) :- BestScore > Beta.
-should_prune(black, BestScore, Alpha, _) :- BestScore < Alpha.
+comp_mode(state(_, _, white), max).
+comp_mode(state(_, _, black), min).

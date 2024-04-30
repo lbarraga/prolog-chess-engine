@@ -10,16 +10,15 @@
 :- use_module(library(prolog_stack)).
 :- use_module(test).
 
-assert_rules(koth_rules) :- assert(koth_rules).
-assert_rules(normal_rules) :- assert(normal_rules).
+print_rules :- rules(Rules), writeln(Rules).
 
 parse_file(FileName, Parsed) :-
     % Open the file
     open(FileName, read, Stream),
 
     % Use the pgn predicate from the parse_pgn module to parse the file
-    ( phrase_from_stream(pgn(Moves, _), Stream), !
-    -> Parsed = Moves
+    ( phrase_from_stream(pgn(Moves, Rules), Stream), !
+    -> Parsed = Moves, assert(rules(Rules))
     ;  Parsed = []
     ),
     close(Stream).
@@ -58,7 +57,7 @@ output_line(Parsed, FinalState, Move) :-
     write(' '), writeln(S).
 
 output(no_test, Parsed, FinalState) :-
-    best_move(FinalState, 2, vm(_, BestMove)),
+    best_move(FinalState, 3, vm(_, BestMove)),
     output_line(Parsed, FinalState, BestMove).
 
 
@@ -78,6 +77,5 @@ main :-
     % Parse the moves into a board
     init_state(InitialState),
     parse_to_board(Parsed, InitialState, FinalState, _),
-
     output(Test, Parsed, FinalState),
     halt.
