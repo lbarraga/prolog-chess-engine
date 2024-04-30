@@ -8,7 +8,6 @@
 :- use_module(alpha_beta).
 :- use_module('board.pl').
 :- use_module(library(prolog_stack)).
-:- use_module(test).
 
 print_rules :- rules(Rules), writeln(Rules).
 
