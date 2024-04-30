@@ -58,7 +58,7 @@ output_line(Parsed, FinalState, Move) :-
     write(' '), writeln(S).
 
 output(no_test, Parsed, FinalState) :-
-    best_move(FinalState, 1, vm(_, BestMove)),
+    best_move(FinalState, 1, value_move(_, BestMove)),
     output_line(Parsed, FinalState, BestMove).
 
 
