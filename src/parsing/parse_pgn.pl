@@ -22,14 +22,14 @@ tag(koth_rules) --> "[Rules \"koth\"]", eol.
 tag(normal_rules) --> between("[", _, "]"), eol.
 
 move_nr --> digits(_), ".".
-plie(san(San, Check)) --> blanks, san(San, Check), blanks.
+ply(san(San, Check)) --> blanks, san(San, Check), blanks.
 
-move(San1, San2) --> move_nr, plie(San1), plie(San2).
-move_plie(San) --> move_nr, plie(San).
+move(San1, San2) --> move_nr, ply(San1), ply(San2).
+move_ply(San) --> move_nr, ply(San).
 
-% Parse the movetext as a list of plie tuples.
+% Parse the movetext as a list of ply tuples.
 movetext([turn(San1, San2) | Rest]) --> move(San1, San2), movetext(Rest).
-movetext([turn(San, no_move)]) --> move_plie(San).
+movetext([turn(San, no_move)]) --> move_ply(San).
 movetext([]) --> [].
 
 result --> "1-0".

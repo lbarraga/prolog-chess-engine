@@ -35,10 +35,10 @@ disambiguation(DisAmb) --> coordinate(DisAmb).
 destination(Co, Prom) --> coordinate(Co), optional_promotion(Prom).
 
 % Generalized move rules
-move(plie(P, Takes, Co, D, Prom)) -->
+move(ply(P, Takes, Co, D, Prom)) -->
     piece(P), optional_disambiguation(D), optional_takes(Takes), destination(Co, Prom). % General piece move.
-move(plie(pawn, takes, Co, file(F), Prom)) --> file(F), takes, destination(Co, Prom).   % Pawn capture.
-move(plie(pawn, no_takes, Co, none, Prom)) --> destination(Co, Prom).                   % Pawn move.
+move(ply(pawn, takes, Co, file(F), Prom)) --> file(F), takes, destination(Co, Prom).   % Pawn capture.
+move(ply(pawn, no_takes, Co, none, Prom)) --> destination(Co, Prom).                   % Pawn move.
 move(castle(short)) --> short_castle.                                                   % short castle.
 move(castle(long)) --> long_castle.                                                     % long castle.
 
