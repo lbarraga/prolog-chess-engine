@@ -1,5 +1,8 @@
 :- module(prettyprint, [print_board/1, print_state/1]).
 
+% ======================== ! Not part of the game logic ! ========================
+% Debugging purposes only
+
 print_state(state(Board, info(castling_info(WhiteCastle, BlackCastle), EnPassant), Color)) :-
     write('White Castle: '), write(WhiteCastle), nl,
     write('Black Castle: '), write(BlackCastle), nl,
