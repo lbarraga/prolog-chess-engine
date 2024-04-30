@@ -110,6 +110,7 @@ om na te gaan of je alle onderdelen hebt afgewerkt.
 - [ ] Testcode
 - [ ] Test functionaliteit
 - [ ] Verslag
+- [ ] GitHub username opgeven op Ufora
 
 ## Basis regels
 
@@ -117,7 +118,7 @@ De regels van schaken hebben we voor jullie hieronder nog eens overgenomen van w
 
 https://nl.wikipedia.org/w/index.php?title=Schaken&oldid=51233822#Spelregels
 
-Schaken heeft een aantal basis regels die jou schaakcomputer moet respecteren. Op elk veld van het shcaakbod mag hoogstens 1 stuk staan. Door een eigen stuk te spelen naar een veld waarop een stuk van de tegenstander staat, wordt dat stuk geslagen en van het bord genomen, het slaande stuk komt in de plaats. Met uitzonderijng van het paard bewegen alle stukken volgens een rechte lijn waarbij er geen stukken op niet-eindpunten van de beweging zijn. Met andere woorden, enkel het paard kan over andere stukken "springen".
+Schaken heeft een aantal basis regels die jou schaakcomputer moet respecteren. Op elk veld van het schaakbord mag hoogstens 1 stuk staan. Door een eigen stuk te spelen naar een veld waarop een stuk van de tegenstander staat, wordt dat stuk geslagen en van het bord genomen, het slaande stuk komt in de plaats. Met uitzondering van het paard bewegen alle stukken volgens een rechte lijn waarbij er geen stukken op niet-eindpunten van de beweging zijn. Met andere woorden, enkel het paard kan over andere stukken "springen".
 
 - Een koning neemt één stap tegelijk, recht of diagonaal. Daarnaast heeft de koning eenmaal per partij een speciale mogelijkheid, zie korte en lange rokade.
 - Een dame mag naar keuze horizontaal, verticaal of diagonaal bewegen.
@@ -198,7 +199,7 @@ Bijvoorbeeld, **Rdf8** beweegt de toren op lijn d naar f8.
 
 In uitzonderlijke gevallen is geen van beide opties voldoende alleen, dan worden ze allebei toegevoegd, bijvoorbeeld: **Qh4xe1** (de koningin op h4 slaat het stuk op e1).
 
-Bij promotie van een pion wordt het nieuwe stuk achteraan toegevoegd, gescheiden door een "=". Bijvoorbeeld, als de pion op e7 naar een koning promoveert op veld e8 schrijven we dit als **e8=Q**.
+Bij promotie van een pion wordt het nieuwe stuk achteraan toegevoegd, gescheiden door een "=". Bijvoorbeeld, als de pion op e7 naar een koningin promoveert op veld e8 schrijven we dit als **e8=Q**.
 
 Rokade wordt weergegeven met de speciale notatie (hoofdletters o, geen nullen):
 
@@ -227,6 +228,8 @@ Het resultaat "*" duidt aan dat het spel nog bezig is. Dit mag ook weggelaten wo
 De zetten zijn steeds gescheiden door een spatie en staan allemaal op 1 lijn (geen newlines).
 
 # Indienen
+
+Zodat we je project kunnen verbeteren, dien je jouw GitHub username op te geven op Ufora (onder het tabblad ufora-tools → opdrachten).
 
 ## GitHub Classroom
 
@@ -285,9 +288,8 @@ Het project moet ingediend zijn op 10/05/2024 om 23:59 CEST.
 # Vragen
 
 Als je vragen hebt over de opgave of problemen ondervindt, dan kun je je
-vraag stellen via [mail](mailto:tom.lauwaerts@ugent.be). Vermeld ook
-steeds je studentennummer (dan kunnen we gemakkelijk je code clonen) en
-een “[minimal breaking
+vraag stellen via [mail](mailto:tom.lauwaerts@ugent.be).
+Stuur geen screenshots van code, maar link naar de code in je repository.
+Indien mogelijk, vermeld ook een “[minimal breaking
 example](https://stackoverflow.com/help/minimal-reproducible-example)”.
-Stuur geen screenshots van code.
 
