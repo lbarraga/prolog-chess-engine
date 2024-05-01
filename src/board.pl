@@ -80,6 +80,16 @@ value_of_piece_on_board(Color, Board, Value) :-
     value(Name, Value).
 
 
+% in_sight(+Axis, +Co1, +Co2, +Board) is det.
+% `Co1` and `Co2` can "see" each-other on `Axis`.
+in_sight(Axis, Co1, Co2, Board) :-
+    on_board(Co1), on_board(Co2),
+    on_same(Axis, Co1, Co2),
+    forall(
+        in_between_on(Axis, Co, Co1, Co2), % For all coordinates `Co` between `Co1` and `Co2`,
+        co_empty(Co, Board)                % `Co` must be empty.
+    ).
+
 % on_same(+Axis, +From, +To) is det.
 % If two coordinates are on the same Axis.
 % Axis could be row, column, anti_diagonal or diagonal.
@@ -107,15 +117,6 @@ in_between_on_help(_,   (R, _), (R1, _), (R2, _)) :- between_non_inclusive(R, R1
 
 between_non_inclusive(Z, X, Y) :- X < Z, Z < Y.
 between_non_inclusive(Z, X, Y) :- Y < Z, Z < X.
-
-% `Co1` and `Co2` can "see" each-other on `Axis`.
-in_sight(Axis, Co1, Co2, Board) :- 
-    on_board(Co1), on_board(Co2),
-    on_same(Axis, Co1, Co2),
-    forall(
-        in_between_on(Axis, Co, Co1, Co2), % For all coordinates `Co` between `Co1` and `Co2`,
-        co_empty(Co, Board)                % `Co` must be empty.
-    ).
 
 % -------------------------------------------------------------------------------------------------------
 %                                          Board actions
