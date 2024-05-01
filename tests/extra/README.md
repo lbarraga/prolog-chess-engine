@@ -15,3 +15,21 @@ maar die zullen later opgevangen worden.
 Er is één grote integratie test, geschreven in python. Deze test neemt een map met pgn-bestanden en kijkt voor elk
 bestand of op elk punt in het spel kijkt of alle mogelijke zetten in die positie overeen komen met alle mogelijke zetten
 van mijn engine (als het `TEST`-argument wordt meegegeven). 
+
+## Uitvoeren
+
+### Prolog unit testen
+De prolog testen kunnen uitgevoerd worden met volgend commando:
+
+```bash
+swipl -t halt -f -q tests/extra/test_main.pl
+```
+
+### Python integratie testen
+
+```bash
+pip install -r requirements.txt
+cd tests/extra/integration
+python test_all_moves.py
+```
+
