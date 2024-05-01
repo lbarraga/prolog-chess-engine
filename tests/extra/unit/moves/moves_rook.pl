@@ -1,6 +1,6 @@
 :- module(moves_rook, []).
-:- use_module('../../../src/board.pl').
-:- use_module('../../../src/moves/moves_main.pl').
+:- use_module('../../../../src/board.pl').
+:- use_module('../../../../src/moves/moves_main.pl').
 
 test_state(state(Board, info(castling_info((long, short), (long, short)), no_ep), white) ) :- test_board(Board).
 
