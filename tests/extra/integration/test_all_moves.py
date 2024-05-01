@@ -15,7 +15,7 @@ import subprocess
 
 
 def run_command(pgn_file_path: str):
-    command = ["swipl", "-t", "halt", "-f", "-q", "-O", "../../src/main.pl", "--", pgn_file_path, "TEST"]
+    command = ["swipl", "-t", "halt", "-f", "-q", "-O", "../../../src/main.pl", "--", pgn_file_path, "TEST"]
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
     output = stdout.decode()
@@ -110,4 +110,4 @@ def test_all_files_in_directory(directory):
 
 
 if __name__ == '__main__':
-    test_all_files_in_directory("../extra/test_pgns")
+    test_all_files_in_directory("../test_pgns")

@@ -4,6 +4,7 @@
 :- use_module('unit/moves/moves_pawn.pl').
 :- use_module('unit/moves/moves_knight.pl').
 :- use_module('unit/parser/san.pl').
+:- use_module('unit/parser/pgn.pl').
 :- use_module(library(plunit)).
 
 :- initialization(run_tests).

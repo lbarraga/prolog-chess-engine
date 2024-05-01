@@ -66,7 +66,7 @@ output_line(Parsed, FinalState, Move) :-
 
 % Output if TEST was specified in the command line arguments
 output(no_test, Parsed, FinalState) :-
-    best_move(FinalState, 1, value_move(_, BestMove)),
+    best_move(FinalState, 2, value_move(_, BestMove)),
     output_line(Parsed, FinalState, BestMove).
 
 % Output if TEST was not specified in the command line arguments
