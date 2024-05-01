@@ -1,4 +1,4 @@
-:- module(moves_bishop, []).
+:- module(bishop, []).
 :- use_module('../../../../src/board.pl').
 :- use_module('../../../../src/moves/moves_main.pl').
 

@@ -1,4 +1,4 @@
-:- module(moves_rook, []).
+:- module(rook, []).
 :- use_module('../../../../src/board.pl').
 :- use_module('../../../../src/moves/moves_main.pl').
 

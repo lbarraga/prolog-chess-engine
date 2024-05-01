@@ -1,4 +1,4 @@
-:- module(moves_queen, []).
+:- module(queen, []).
 :- use_module('../../../../src/board.pl').
 :- use_module('../../../../src/moves/moves_main.pl').
 

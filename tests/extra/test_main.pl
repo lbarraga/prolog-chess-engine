@@ -1,10 +1,13 @@
-:- use_module('unit/moves/moves_bishop.pl').
-:- use_module('unit/moves/moves_queen.pl').
-:- use_module('unit/moves/moves_king.pl').
-:- use_module('unit/moves/moves_pawn.pl').
-:- use_module('unit/moves/moves_knight.pl').
+:- use_module('unit/moves/bishop.pl').
+:- use_module('unit/moves/queen.pl').
+:- use_module('unit/moves/king.pl').
+:- use_module('unit/moves/pawn.pl').
+:- use_module('unit/moves/knight.pl').
+:- use_module('unit/moves/pin.pl').
 :- use_module('unit/parser/san.pl').
 :- use_module('unit/parser/pgn.pl').
 :- use_module(library(plunit)).
 
-:- initialization(run_tests).
+run :- run_tests, halt.
+
+:- initialization(run).
