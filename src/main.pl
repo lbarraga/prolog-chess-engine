@@ -8,6 +8,7 @@
 :- use_module(alpha_beta).
 :- use_module('board.pl').
 :- use_module(library(prolog_stack)).
+:- use_module(library(ansi_term)).
 
 print_rules :- rules(Rules), writeln(Rules).
 
@@ -20,7 +21,7 @@ parse_file(FileName, Parsed) :-
     % Use the pgn predicate from the parse_pgn module to parse the file
     ( phrase_from_stream(pgn(Moves, Rules), Stream), !
     -> Parsed = Moves, assert(rules(Rules))
-    ;  Parsed = []
+    ;  ansi_format([bold,fg(yellow)], '~w~n', ['Failed to parse file.']), fail
     ),
     close(Stream).
 
@@ -73,8 +74,7 @@ output(test, Parsed, FinalState) :-
     findall(Move, legal_move(Move, FinalState, _), Moves),
     maplist(output_line(Parsed, FinalState), Moves).
 
-
-main :-
+main_ :-
     % Extract the filename from the command line arguments
     current_prolog_flag(argv, Argv),
     nth0(0, Argv, FileName),
@@ -87,3 +87,5 @@ main :-
     parse_to_board(Parsed, InitialState, FinalState),
     output(Test, Parsed, FinalState),
     halt.
+
+main :- (main_ -> true; ansi_format([bold,fg(yellow)], '~w~n', ['Something went wrong, Exiting...']), halt).

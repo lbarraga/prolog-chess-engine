@@ -2,6 +2,7 @@
 :- use_module('../pieces.pl').
 :- use_module('../moves/moves_main.pl').
 :- use_module('../parsing/san_move.pl', [san_move/3]).
+:- use_module(library(ansi_term)).
 
 % parse_to_board(+turns, +State, -EndState)
 % Converts the parsed moves into a board state.
@@ -19,5 +20,13 @@ parse_to_board([turn(WhitePly, BlackPly) | Rest], StartState, EndState) :-
 % Parses a ply into a move and applies it to the board.
 parse_ply(no_move, State, State) :- !.
 parse_ply(San, State, EndState) :-
-    san_move(San, Move, State),
+    (san_move(San, Move, State) % Try to convert the San to an internal representation
+    -> true
+    ; san_string(San, SanString), ansi_format([bold,fg(yellow)], 'Invalid move: ~w~n', [SanString]), fail
+    ),
     legal_move(Move, State, EndState).
+
+
+san_string(San, SanString) :-
+    phrase(San, SanCodes),
+    string_codes(SanString, SanCodes).
